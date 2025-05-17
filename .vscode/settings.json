@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "freertos.h": "c",
-        "nvs_flash.h": "c"
+        "nvs_flash.h": "c",
+        "global.h": "c"
     }
 }
