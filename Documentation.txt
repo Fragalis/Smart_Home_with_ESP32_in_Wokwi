@@ -1,0 +1,37 @@
+IoT Weather Station with ESP32
+Overview
+This project simulates an ESP32-based IoT weather station using Wokwi, reading temperature, humidity, and pressure from virtual DHT22 and BMP280 sensors. The data is published over WiFi to an MQTT broker, with error handling and optional FreeRTOS tasks. It demonstrates skills in C/C++ programming, I2C, WiFi, firmware development, and RTOS, aligning with embedded software/firmware internship requirements in Ho Chi Minh City.
+
+Week 1: Sensor Setup
+
+Set up Wokwi project with ESP32, DHT22 (GPIO 4), and BMP280 (I2C pins).
+Learned ESP32 architecture, GPIO, single-wire (DHT22), and I2C (BMP280) protocols.
+Wrote C/C++ to read and display sensor data on serial monitor.
+
+Week 2: WiFi and MQTT
+
+Configured WiFi with dummy SSID "Wokwi-GUEST".
+Connected to "broker.hivemq.com" and published sensor data to MQTT topics.
+Studied WiFi configuration and MQTT protocol.
+
+Week 3: Error Handling and Power
+
+Added checks for invalid sensor readings and WiFi/MQTT retries.
+Simulated deep sleep to mimic low-power IoT design.
+Learned error handling and power management concepts.
+
+Week 4: RTOS and Portfolio
+
+Implemented FreeRTOS tasks for sensor reading and MQTT publishing.
+Created GitHub README with project details, Wokwi link, and logs.
+Built portfolio on GitHub Pages linking to this repository.
+
+Wokwi Simulation
+Run the simulation (update with your Wokwi project link).
+Skills Demonstrated
+
+Must-Have: C/C++, I2C, WiFi, firmware development, ESP32 registers, FreeRTOS.
+Nice-to-Have: Problem-solving, Python scripting (optional MQTT data processing).
+
+Relevance to Internships
+This project aligns with IoT demands at Viettel and FPT Software, showcasing skills for smart agriculture and industrial applications.
