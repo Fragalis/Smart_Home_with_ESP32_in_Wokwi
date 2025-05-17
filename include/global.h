@@ -7,11 +7,17 @@
 #include <driver/gpio.h>
 #include <esp_err.h>
 #include <esp_log.h>
+#include "esp_system.h"
+#include <esp_timer.h>
 #include <nvs_flash.h>
 
 #include "../src/tasks/blink_led_task.h"
+#include "../src/tasks/dht22_task.h"
 
 // GPIO configuration
-#define LED_GPIO GPIO_NUM_19
+#define LED_PIN GPIO_NUM_19
+
+// DHT22 pin
+#define DHT_PIN GPIO_NUM_47
 
 #endif // GLOBAL_H_

@@ -10,13 +10,18 @@
       "top": 178.8,
       "left": 42.6,
       "attrs": { "color": "red", "flip": "1" }
-    }
+    },
+    { "type": "wokwi-dht22", "id": "dht1", "top": -86.1, "left": 61.8, "attrs": {} }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
     [ "esp:RX", "$serialMonitor:TX", "", [] ],
     [ "esp:19", "led1:A", "green", [ "v0" ] ],
-    [ "esp:GND.3", "led1:C", "black", [ "h0" ] ]
+    [ "esp:GND.3", "led1:C", "black", [ "h0" ] ],
+    [ "esp:GND.3", "dht1:GND", "black", [ "h0" ] ],
+    [ "esp:3V3.1", "dht1:VCC", "green", [ "v0" ] ],
+    [ "esp:47", "dht1:SDA", "green", [ "v0", "h57.6" ] ],
+    [ "esp:21", "dht1:NC", "green", [ "h67.2" ] ]
   ],
   "dependencies": {}
 }
