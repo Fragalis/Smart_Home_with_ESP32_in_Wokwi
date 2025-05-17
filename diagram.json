@@ -2,7 +2,21 @@
   "version": 1,
   "author": "Fragalis",
   "editor": "wokwi",
-  "parts": [ { "type": "board-esp32-s3-devkitc-1", "id": "esp", "top": 0, "left": 0, "attrs": {} } ],
-  "connections": [ [ "esp:TX", "$serialMonitor:RX", "", [] ], [ "esp:RX", "$serialMonitor:TX", "", [] ] ],
+  "parts": [
+    { "type": "board-esp32-s3-devkitc-1", "id": "esp", "top": 9.42, "left": -62.63, "attrs": {} },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 178.8,
+      "left": 42.6,
+      "attrs": { "color": "red", "flip": "1" }
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "esp:19", "led1:A", "green", [ "v0" ] ],
+    [ "esp:GND.3", "led1:C", "black", [ "h0" ] ]
+  ],
   "dependencies": {}
 }
