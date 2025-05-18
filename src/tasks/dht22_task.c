@@ -79,8 +79,8 @@ static esp_err_t read_data(float *temp, float *hum) {
     }
 
     // Convert the data to temperature and humidity
-    *hum = (data[0] / 100.00) + data[1] / 10.00;
-    *temp = ((data[2] & 0x7F) / 100.00 + data[3]) / 10.00;
+    *hum = ((data[0] << 8) + data[1]) / 10.00;
+    *temp = (((data[2] & 0x7F) << 8) + data[3]) / 10.00;
     if (data[2] & 0x80) *temp = -(*temp); // Negative temperature
     return ESP_OK;
 }
