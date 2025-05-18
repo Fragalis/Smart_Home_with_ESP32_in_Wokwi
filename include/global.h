@@ -11,9 +11,11 @@
 #include "esp_wifi.h"
 #include <esp_timer.h>
 #include <nvs_flash.h>
+#include "Espressif_MQTT_Client.h"
 #include "ThingsBoard.h"
 
 #include "../src/tasks/wifi_task.h"
+#include "../src/tasks/thingsboard_task.h"
 #include "../src/tasks/blink_led_task.h"
 #include "../src/tasks/dht22_task.h"
 

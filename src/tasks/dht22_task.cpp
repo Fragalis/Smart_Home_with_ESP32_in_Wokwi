@@ -104,6 +104,10 @@ void dht22_task(void *arg) {
         // Log the temperature and humidity
         ESP_LOGI(TAG, "Temperature: %.2f °C, Humidity: %.2f %%", temperature, humidity);
 
+        char json[64];
+        snprintf(json, 64, "{\"temperature\": %.2f, \"humidity\": %.2f}", temperature, humidity);
+        send_telemetry(json);
+
         // Delay for 5 seconds before the next reading
         vTaskDelay(5000 / portTICK_PERIOD_MS);
     }

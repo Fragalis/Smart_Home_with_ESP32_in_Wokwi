@@ -18,11 +18,14 @@ extern "C" {
 
         // Initialize the WiFi task
         wifi_task_init();
+
+        // Initialize the ThingsBoard task
+        thingsboard_task_init();
     }
 }
 /*
     Sensors: LDR (light).
     Actuator: Relay (lamp control).
-    Software: ESP-IDF, FreeRTOS tasks, MQTT Broker, Dashboard?
+    Software: ESP-IDF, FreeRTOS tasks, ThingsBoard.
     Features: Data publishing, RPC relay control, planned OTA.
 */
