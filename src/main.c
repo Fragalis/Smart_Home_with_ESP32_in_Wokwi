@@ -14,6 +14,9 @@ void app_main(void) {
 
     // Initialize the DHT22 task
     dht22_task_init();
+
+    // Initialize the WiFi task
+    wifi_task_init();
 }
 
 /*

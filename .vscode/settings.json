@@ -17,6 +17,8 @@
         "string": "c",
         "string_view": "c",
         "ranges": "c",
-        "span": "c"
+        "span": "c",
+        "wifi_task.h": "c",
+        "esp_wifi.h": "c"
     }
 }
