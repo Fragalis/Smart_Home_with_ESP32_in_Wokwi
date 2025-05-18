@@ -115,10 +115,10 @@ void dht22_task(void *arg) {
 
 void dht22_task_init() {
     // Create the DHT22 task
-    BaseType_t task_created = xTaskCreate(dht22_task, "dht20_task", 4096, NULL, 1, NULL);
+    BaseType_t task_created = xTaskCreate(dht22_task, "dht22_task", 4096, NULL, 1, NULL);
     if (task_created != pdPASS) {
-        ESP_LOGE(TAG, "Failed to create dht20_task");
+        ESP_LOGE(TAG, "Failed to create dht22_task");
         return;
     }
-    ESP_LOGI(TAG, "dht20_task initialized");
+    ESP_LOGI(TAG, "dht22_task initialized");
 }
