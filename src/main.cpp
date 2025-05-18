@@ -24,8 +24,9 @@ extern "C" {
     }
 }
 /*
-    Sensors: LDR (light).
-    Actuator: Relay (lamp control).
-    Software: ESP-IDF, FreeRTOS tasks, ThingsBoard.
-    Features: Data publishing, RPC relay control, planned OTA.
+    Your current system, reading DHT22 data and pushing it to ThingsBoard via MQTT, is a solid foundation. 
+    To emphasize UART and SPI protocols and learn multitasking, you can add:
+    - Serial LCD Display (UART): Display DHT22 readings locally for immediate feedback, a common feature in smart homes.
+    - SPI-Based Accelerometer (e.g., ADXL345): Detect motion for security or automation, relevant for smart home applications.
+    - SD Card (SPI): Log sensor data for offline analysis, useful for troubleshooting or compliance.
 */

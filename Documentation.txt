@@ -1,37 +1,41 @@
-IoT Weather Station with ESP32
-Overview
-This project simulates an ESP32-based IoT weather station using Wokwi, reading temperature, humidity, and pressure from virtual DHT22 and BMP280 sensors. The data is published over WiFi to an MQTT broker, with error handling and optional FreeRTOS tasks. It demonstrates skills in C/C++ programming, I2C, WiFi, firmware development, and RTOS, aligning with embedded software/firmware internship requirements in Ho Chi Minh City.
+IoT-Enabled Smart Home Automation System - To-Do List and Achievements Tracker
+================================================================================
 
-Week 1: Sensor Setup
+Achievements: What I've Done
+----------------------------
+- Hardware:
+  - ESP32: Set up as main microcontroller.
+  - DHT22: Connected to GPIO 23 for temp/humidity data.
+- Software:
+  - WiFi Task: Connects to "Wokwi-GUEST", handles reconnection with event handlers.
+  - ThingsBoard Task: Publishes DHT22 data to app.coreiot.io via MQTT, uses ThingsBoard SDK (C++).
+  - DHT22 Task: Reads sensor data every 5 seconds, formats as JSON with ArduinoJson.
+  - Switched to C++: Resolved ArduinoJson error by using .cpp files for ThingsBoard SDK.
+- Protocols: WiFi, MQTT for IoT communication.
+- Simulation: Wokwi with ESP32, DHT22, tested reconnection by toggling SSID.
+- Documentation: GitHub README with WiFi/MQTT setup, renamed mqtt_task to thingsboard_task.
 
-Set up Wokwi project with ESP32, DHT22 (GPIO 4), and BMP280 (I2C pins).
-Learned ESP32 architecture, GPIO, single-wire (DHT22), and I2C (BMP280) protocols.
-Wrote C/C++ to read and display sensor data on serial monitor.
+To-Do List: What's Next
+-----------------------
+Week 1 (May 19-25, 2025): Serial LCD (UART)
+- [ ] Add Serial LCD to Wokwi diagram.json (GPIO 17 TX, 16 RX) - May 20
+- [ ] Write UART driver to send temp/humidity strings - May 21
+- [ ] Create lcd_task (update every 5s, use queue) - May 22
+- [ ] Test LCD display in Wokwi - May 23
 
-Week 2: WiFi and MQTT
+Week 2 (May 26-Jun 1, 2025): ADXL345 Accelerometer (SPI)
+- [ ] Add ADXL345 to diagram.json (GPIO 18 SCK, 23 MOSI, 19 MISO, 5 CS) - May 26
+- [ ] Write SPI driver for accelerometer data - May 27
+- [ ] Create accelerometer_task (read every 1s, send to ThingsBoard) - May 28
+- [ ] Test motion data in Wokwi - May 29
 
-Configured WiFi with dummy SSID "Wokwi-GUEST".
-Connected to "broker.hivemq.com" and published sensor data to MQTT topics.
-Studied WiFi configuration and MQTT protocol.
+Week 3 (Jun 2-8, 2025): SD Card (SPI)   
+- [ ] Add SD card to diagram.json (same SPI, GPIO 4 CS) - Jun 2
+- [ ] Write SD card driver for logging - Jun 3
+- [ ] Create sd_logging_task (log every 1min, use semaphore) - Jun 4
+- [ ] Test SD logging in Wokwi - Jun 5
 
-Week 3: Error Handling and Power
-
-Added checks for invalid sensor readings and WiFi/MQTT retries.
-Simulated deep sleep to mimic low-power IoT design.
-Learned error handling and power management concepts.
-
-Week 4: RTOS and Portfolio
-
-Implemented FreeRTOS tasks for sensor reading and MQTT publishing.
-Created GitHub README with project details, Wokwi link, and logs.
-Built portfolio on GitHub Pages linking to this repository.
-
-Wokwi Simulation
-Run the simulation (update with your Wokwi project link).
-Skills Demonstrated
-
-Must-Have: C/C++, I2C, WiFi, firmware development, ESP32 registers, FreeRTOS.
-Nice-to-Have: Problem-solving, Python scripting (optional MQTT data processing).
-
-Relevance to Internships
-This project aligns with IoT demands at Viettel and FPT Software, showcasing skills for smart agriculture and industrial applications.
+Week 4 (Jun 9-15, 2025): Multitasking & Documentation
+- [ ] Optimize tasks with queue for DHT22/accelerometer data - Jun 9
+- [ ] Test full system (LCD, ThingsBoard, SD) in Wokwi - Jun 10
+- [ ] Update GitHub README with UART/SPI/multitasking details - Jun 11
