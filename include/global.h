@@ -18,6 +18,7 @@
 #include "../src/tasks/thingsboard_task.h"
 #include "../src/tasks/blink_led_task.h"
 #include "../src/tasks/dht22_task.h"
+#include "../src/tasks/ldr_task.h"
 
 // GPIO configuration
 #define LED_PIN GPIO_NUM_19

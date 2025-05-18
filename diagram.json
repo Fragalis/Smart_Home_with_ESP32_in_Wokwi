@@ -8,10 +8,18 @@
       "type": "wokwi-led",
       "id": "led1",
       "top": 178.8,
-      "left": 42.6,
+      "left": 138.6,
       "attrs": { "color": "red", "flip": "1" }
     },
-    { "type": "wokwi-dht22", "id": "dht1", "top": -86.1, "left": 61.8, "attrs": {} }
+    { "type": "wokwi-dht22", "id": "dht1", "top": -86.1, "left": 61.8, "attrs": {} },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr1",
+      "top": -86.7,
+      "left": 80.9,
+      "rotate": 90,
+      "attrs": {}
+    }
   ],
   "connections": [
     [ "esp:TX", "$serialMonitor:RX", "", [] ],
@@ -19,9 +27,13 @@
     [ "esp:19", "led1:A", "green", [ "v0" ] ],
     [ "esp:GND.3", "led1:C", "black", [ "h0" ] ],
     [ "esp:GND.3", "dht1:GND", "black", [ "h0" ] ],
-    [ "esp:3V3.1", "dht1:VCC", "green", [ "v0" ] ],
     [ "esp:47", "dht1:SDA", "green", [ "v0", "h57.6" ] ],
-    [ "esp:21", "dht1:NC", "green", [ "h67.2" ] ]
+    [ "esp:21", "dht1:NC", "green", [ "h67.2" ] ],
+    [ "esp:GND.3", "ldr1:GND", "black", [ "h0" ] ],
+    [ "esp:21", "ldr1:DO", "green", [ "h0" ] ],
+    [ "esp:10", "ldr1:AO", "green", [ "h0" ] ],
+    [ "esp:3V3.2", "ldr1:VCC", "red", [ "h0" ] ],
+    [ "esp:3V3.1", "dht1:VCC", "red", [ "v0", "h134.35" ] ]
   ],
   "dependencies": {}
 }

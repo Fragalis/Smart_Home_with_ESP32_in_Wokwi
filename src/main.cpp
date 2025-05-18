@@ -16,6 +16,9 @@ extern "C" {
         // Initialize the DHT22 task
         dht22_task_init();
 
+        // Initialize the LDR task
+        ldr_task_init();
+
         // Initialize the WiFi task
         wifi_task_init();
 
