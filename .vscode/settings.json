@@ -19,6 +19,12 @@
         "ranges": "c",
         "span": "c",
         "wifi_task.h": "c",
-        "esp_wifi.h": "c"
+        "esp_wifi.h": "c",
+        "thingsboard_task.h": "c",
+        "stdio.h": "c",
+        "thingsboard.h": "c",
+        "espressif_mqtt_client.h": "c",
+        "esp_crt_bundle.h": "c",
+        "imqtt_client.h": "c"
     }
 }

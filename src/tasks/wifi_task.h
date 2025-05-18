@@ -3,6 +3,7 @@
 
 #include <global.h>
 
+extern volatile bool wifi_is_connected;
 void wifi_task_init();
 
 #endif // WIFI_TASK_H_
