@@ -11,7 +11,7 @@ static void blink_led_task(void *arg)
         if (ret != ESP_OK) {
             ESP_LOGE(TAG, "Failed to set GPIO %d: %s", LED_PIN, esp_err_to_name(ret));
         }
-        vTaskDelay(pdMS_TO_TICKS(1000)); // Blink every 1 second
+        vTaskDelay(pdMS_TO_TICKS(BLINK_LED_TIMER)); // Blink every 1 second
     }
 }
 

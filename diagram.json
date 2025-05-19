@@ -58,7 +58,6 @@
     [ "esp:GND.4", "led2:C", "black", [ "h124.8", "v19.2" ] ],
     [ "esp:GND.4", "led1:C", "black", [ "h0" ] ],
     [ "esp:GND.4", "drv1:GND.1", "black", [ "h0" ] ],
-    [ "esp:47", "drv1:DIR", "green", [ "v0", "h163.2" ] ],
     [ "esp:3V3.2", "drv1:VMOT", "red", [ "h307.15", "v19.2" ] ],
     [ "drv1:VMOT", "drv1:VDD", "red", [ "h9.75", "v57.68" ] ],
     [ "drv1:ENABLE", "drv1:GND.1", "black", [ "h-9.6", "v86.4", "h57.6" ] ],
@@ -66,7 +65,8 @@
     [ "drv1:RESET", "drv1:SLEEP", "red", [ "h-9.6", "v9.6" ] ],
     [ "drv1:MS3", "drv1:ENABLE", "black", [ "h-9.6", "v-28.8" ] ],
     [ "drv1:MS2", "drv1:ENABLE", "black", [ "h-9.6", "v-19.2" ] ],
-    [ "drv1:STEP", "esp:11", "blue", [ "h-9.6", "v76.8" ] ]
+    [ "drv1:STEP", "esp:11", "blue", [ "h-9.6", "v76.8" ] ],
+    [ "esp:21", "drv1:DIR", "green", [ "h0" ] ]
   ],
   "dependencies": {}
 }

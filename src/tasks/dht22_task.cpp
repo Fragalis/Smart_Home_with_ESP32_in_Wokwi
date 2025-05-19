@@ -7,8 +7,6 @@ static const int BUFFER_SIZE = 36;
 static float temperature = 0.0;
 static float humidity = 0.0;
 
-QueueHandle_t dht22_queue;
-
 static bool await_signal(uint8_t uInterval, int signal) 
 {
     uint8_t uSeconds = 0;

@@ -2,14 +2,12 @@
 #include "time.h"
 
 static const char *TAG = "NTP";
-QueueHandle_t ntp_queue;
 
 void ntp_task(void *arg) {
     while (!wifi_is_connected) {
         ESP_LOGE(TAG, "WiFi not connected");
         vTaskDelay(pdMS_TO_TICKS(WIFI_DELAY_TIMER));
     }
-
     
     esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
     esp_sntp_setservername(0, "vn.pool.ntp.org");
@@ -30,7 +28,7 @@ void ntp_task(void *arg) {
     while (1) {
         time(&now);
         localtime_r(&now, &timeinfo);
-        ntp_data.data.ntp_data.timestamp = now;        
+        ntp_data.data.ntp_data.hour = timeinfo.tm_hour;       
         if (ntp_queue != NULL && xQueueSend(ntp_queue, &ntp_data, 0) != pdPASS) {
             ESP_LOGE(TAG, "Failed to send NTP data to queue");
         }

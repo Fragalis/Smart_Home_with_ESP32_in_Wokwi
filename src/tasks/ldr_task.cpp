@@ -8,8 +8,6 @@ static const float RL10 = 50;
 static int luminosity = 0;
 static int is_dark = 0;
 
-QueueHandle_t ldr_queue;
-
 void ldr_task(void *arg) 
 {
     local_data_t ldr_data;

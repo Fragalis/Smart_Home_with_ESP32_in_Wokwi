@@ -37,6 +37,9 @@
 #define DHT_PIN GPIO_NUM_47
 #define LDR_DO_PIN GPIO_NUM_21
 #define LDR_AO_PIN GPIO_NUM_10
+#define STEPPER_DIRECTION_PIN GPIO_NUM_21
+#define STEPPER_STEP_PIN GPIO_NUM_11
+#define LIGHT_PIN GPIO_NUM_20
 
 // Timer configuration
 #define BLINK_LED_TIMER 1000u
@@ -49,6 +52,11 @@
 #define THINGSBOARD_LOOP_TIMER 100u
 #define NTP_WAIT_TIMER 1000u
 #define NTP_SYNC_TIMER 15000u
+#define STEPPER_DELAY_TIMER 10u
+#define CONTROL_TIMER 1000u
 
+// Threshold configuration
+constexpr const int LIGHT_THRESHOLD = 100; // Threshold to toggle the lamp
+constexpr const int MAX_STEPS = 500;       // Maximum steps for the stepper motor
 
 #endif // GLOBAL_H_

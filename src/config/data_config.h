@@ -3,11 +3,7 @@
 
 #include <global.h>
 
-enum data_type { 
-    DHT22, 
-    LDR, 
-    NTP 
-};
+enum data_type { DHT22, LDR, NTP };
 
 typedef struct {
     data_type type;
@@ -21,7 +17,7 @@ typedef struct {
             int is_dark;    // DO state (1 for dark)
         } ldr_data;
         struct {
-            time_t timestamp;
+            int hour;
         } ntp_data;
     } data;
 } local_data_t;
