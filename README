@@ -1,193 +1,61 @@
 IoT-Enabled Smart Home Automation System
-Overview
-This project is an ESP32-based smart home automation system developed using ESP-IDF in C++ and simulated on Wokwi. It collects temperature and humidity data from a DHT22 sensor and sends it to an IoT platform (app.coreiot.io) via MQTT using the ThingsBoard SDK. The system leverages FreeRTOS for multitasking, ensuring robust WiFi connectivity and telemetry publishing. Designed for real-world smart home applications, it demonstrates skills in embedded systems, IoT communication, RTOS, and protocol handling, targeting fresher-level Embedded Software Engineer roles.
-Features
+================================================================================
 
-Reads temperature and humidity from a DHT22 sensor (GPIO 23) every 5 seconds.
-Connects to a WiFi network ("Wokwi-GUEST") with event-driven reconnection.
-Publishes sensor data as JSON to app.coreiot.io (port 1883) using MQTT.
-Uses FreeRTOS tasks for modular operation: WiFi initialization, ThingsBoard communication, and sensor reading.
-Simulates functionality in Wokwi with debugging via Serial Monitor.
-Implemented in C++ to support ArduinoJson and ThingsBoard SDK.
+Overview
+This project is an ESP32-based smart home automation system developed using ESP-IDF in C++ and simulated on Wokwi. It collects environmental data (temperature, humidity, luminosity) and controls devices (curtains, lights) based on schedules and conditions, sending telemetry to app.coreiot.io via MQTT using the ThingsBoard SDK. The system leverages FreeRTOS for multitasking, ensuring robust WiFi connectivity, time synchronization, and device control. Designed for real-world smart home applications, it demonstrates skills in embedded systems, IoT communication, RTOS, and protocol handling, targeting fresher-level Embedded Software Engineer roles.
+
+Features
+- Reads temperature and humidity from a DHT22 sensor (GPIO 47) every 5 seconds, buffered via FreeRTOS queue.
+- Detects luminosity using an LDR (GPIO 10 AO, 21 DO) every 5 seconds, optimized with a state machine and queue.
+- Synchronizes time with NTP every 15 seconds for scheduling.
+- Controls curtains (stepper motor on GPIO 11 step, 21 direction) and lights (GPIO 20) based on time (7 AM - 5 PM) and luminosity (light on if below threshold 100).
+- Connects to a WiFi network ("Wokwi-GUEST") with event-driven reconnection.
+- Publishes sensor data as JSON to ThingsBoard server (port 1883) using MQTT.
+- Uses FreeRTOS tasks for modular operation: WiFi, ThingsBoard, sensor reading, control, and NTP.
+- Simulates functionality in Wokwi with debugging via Serial Monitor.
+- Implemented in C++ to support ArduinoJson and ThingsBoard SDK.
+- Initializes ILI9341 TFT LCD (SPI: GPIO 13 MOSI, 9 SCK, 15 CS) for future display of sensor data.
 
 Hardware
-
-ESP32: Core microcontroller for processing and communication.
-DHT22 Sensor: Connected to GPIO 23 for temperature and humidity data.
+- ESP32-S3-DevKitM-1: Core microcontroller (4 MB flash, 512 KB RAM).
+- DHT22 Sensor: GPIO 47 for temperature and humidity.
+- LDR: GPIO 10 (AO), 21 (DO) for luminosity, planned outdoors.
+- Stepper Motor: GPIO 11 (step), 21 (direction) for curtains.
+- Light: GPIO 20 for ambient control.
+- ILI9341 TFT LCD: SPI (GPIO 13 MOSI, 9 SCK, 15 CS).
 
 Software Architecture
-The system is organized into three FreeRTOS tasks for modularity and concurrency:
-
-WiFi Task (wifi_task_init):
-
-Initializes WiFi using esp_netif_init and esp_wifi_init.
-Connects to "Wokwi-GUEST" (no password) with esp_wifi_set_config.
-Registers event handlers for WIFI_EVENT_STA_START, WIFI_EVENT_STA_DISCONNECTED, and IP_EVENT_STA_GOT_IP.
-Sets a global wifi_is_connected flag to signal connection status to other tasks.
-Logs connection status (e.g., "IP: 192.168.1.100") via ESP_LOGI.
-
-
-ThingsBoard Task (thingsboard_task):
-
-Waits for wifi_is_connected before connecting to app.coreiot.io (port 1883).
-Uses ThingsBoard SDK (Espressif_MQTT_Client, ThingsBoard) with device token wlp3f4coe12qet5k2zgs.
-Runs tb.loop() every 10ms to maintain MQTT connection and process telemetry.
-Publishes JSON telemetry via tb.sendTelemetryString.
-Created with xTaskCreate (stack size 2048, priority 5).
-Logs connection status (e.g., "Connected") and errors via ESP_LOGI/ESP_LOGE.
-
-
-DHT22 Task (dht22_task):
-
-Reads temperature and humidity from DHT22 (GPIO 23) every 5 seconds.
-Implements low-level signal timing (2ms low, 40us high) and 40-bit data reading with checksum validation.
-Formats data as JSON (e.g., {"temperature": 25.5, "humidity": 60.0}) using snprintf.
-Sends telemetry to thingsboard_task via send_telemetry.
-Created with xTaskCreate (stack size 4096, priority 1).
-Logs readings (e.g., "Temperature: 25.50 °C, Humidity: 60.00 %") via ESP_LOGI.
-
-
-
-Prerequisites
-
-PlatformIO: For building and uploading the project.
-ESP-IDF: Framework for ESP32 development (version 5.x recommended).
-Wokwi: For simulation (configure ESP32 and DHT22).
-Dependencies (in platformio.ini):[env:esp32dev]
-platform = espressif32
-board = esp32dev
-framework = espidf
-lib_deps =
-    bblanchon/ArduinoJson@^7.2.0
-    espressif/esp-dht
-    thingsboard/thingsboard@^0.14.0
-
-
-
-Setup Instructions
-
-Clone the Repository:
-git clone https://github.com/Fragalis/SmartHomeESPIDF.git
-cd SmartHomeESPIDF
-
-
-Configure Wokwi:
-
-Create a diagram.json in Wokwi:{
-  "version": 1,
-  "components": [
-    {
-      "type": "esp32",
-      "id": "esp",
-      "wifi": {
-        "ssid": "Wokwi-GUEST",
-        "password": ""
-      }
-    },
-    {
-      "type": "dht22",
-      "id": "dht",
-      "pins": {
-        "data": "GPIO23"
-      }
-    }
-  ]
-}
-
-
-
-
-Build and Run:
-
-Open the project in PlatformIO.
-Build: pio run.
-Simulate in Wokwi: Upload the compiled binary or run in Wokwi’s IDE.
-
-
-Verify Output:
-
-Open Wokwi’s Serial Monitor to check logs:
-WiFi: "Connecting to Wokwi-GUEST...", "IP: x.x.x.x".
-ThingsBoard: "Connected".
-DHT22: "Temperature: 25.50 °C, Humidity: 60.00 %".
-
-
-Access app.coreiot.io dashboard to view telemetry (replace with ThingsBoard dashboard if applicable).
-
-
-
-Usage
-
-Start the System: Launch the Wokwi simulation or power on the ESP32.
-WiFi Connection: Automatically connects to “Wokwi-GUEST”.
-Telemetry: DHT22 data is sent to app.coreiot.io every 5 seconds.
-Debugging: Monitor logs in Wokwi’s Serial Monitor for WiFi, MQTT, and sensor status.
-Testing Reconnection:
-Change SSID to “Wokwi-FAIL” in Wokwi, then restore to “Wokwi-GUEST”.
-Verify WiFi reconnects (wifi_is_connected = true) and MQTT resumes (tb.connected()).
-
-
-
-Planned Features
-To enhance the system with additional protocols and multitasking:
-
-Serial LCD (UART):
-Display DHT22 data locally on a serial LCD (GPIO 17 TX, GPIO 16 RX).
-Add lcd_task to update every 5 seconds, receiving data via a FreeRTOS queue.
-Use ESP-IDF’s uart.h for communication.
-
-
-ADXL345 Accelerometer (SPI):
-Detect motion for smart home security (GPIO 18 SCK, 23 MOSI, 19 MISO, 5 CS).
-Add accelerometer_task to read data every second and publish to app.coreiot.io.
-Use ESP-IDF’s spi_master.h for SPI communication.
-
-
-SD Card (SPI):
-Log DHT22 and accelerometer data to an SD card (same SPI bus, GPIO 4 CS).
-Add sd_logging_task to write data every minute, using a semaphore for exclusive access.
-Use ESP-IDF’s vfs.h and sdmmc.h for file operations.
-
-
-
-State Diagram
-The system’s tasks interact as follows:
-
-WiFi Task: Initializes → Connects to WiFi → Sets wifi_is_connected.
-DHT22 Task: Reads sensor → Formats JSON → Calls send_telemetry.
-ThingsBoard Task: Waits for WiFi → Connects to MQTT → Publishes telemetry.
-Future Tasks:
-lcd_task: Reads queue → Updates LCD.
-accelerometer_task: Reads SPI → Sends to queue.
-sd_logging_task: Reads queue → Writes to SD card.
-
-
+- WiFi Task: Connects to "Wokwi-GUEST" and manages reconnection.
+- ThingsBoard Task: Publishes telemetry to ThingsBoard server.
+- DHT22 Task: Reads and queues temperature/humidity data.
+- LDR Task: Reads and queues luminosity data.
+- NTP Task: Fetches and queues time data.
+- Control Task: Manages curtains and lights based on time and luminosity.
 
 Real-World Applications
+- Smart Home Automation: Controls curtains and lights based on time and light levels.
+- Environmental Monitoring: Tracks temperature, humidity, and luminosity for climate control.
+- Security: Future motion detection for intrusion alerts or automation triggers.
+- Data Logging: Offline storage for environmental analysis or compliance.
 
-Smart Home Monitoring: Tracks temperature and humidity for climate control.
-Security: Future motion detection for intrusion alerts or automation triggers.
-Data Logging: Offline storage for environmental analysis or compliance.
+Planned Features
+- ILI9341 TFT LCD (SPI):
+  - Create lcd_task to display LDR/DHT22 data every 5 seconds with custom text rendering.
+- Temperature-Based Control (DHT22):
+  - Close curtains and toggle a fan/AC (GPIO 13) if temperature > 32°C during 7 AM-7 PM.
+- Manual Overrides:
+  - Add button or ThingsBoard RPC for manual curtain/light control.
+- ADXL345 Accelerometer (SPI):
+  - Detect motion for smart home security (GPIO 9 SCK, 14 MISO, 15 CS).
+  - Add accelerometer_task to read data every second and publish to app.coreiot.io.
+  - Use ESP-IDF’s spi_master.h for SPI communication.
+- SD Card (SPI):
+  - Log DHT22 and accelerometer data to an SD card (same SPI bus, GPIO 7 CS).
+  - Add sd_logging_task to write data every minute, using a semaphore for access.
+  - Use ESP-IDF’s vfs.h and sdmmc.h for file operations.
 
 Future Improvements
-
-Implement FreeRTOS queues to share data between dht22_task, accelerometer_task, thingsboard_task, lcd_task, and sd_logging_task.
-Add error handling for DHT22 checksum failures and MQTT connection issues.
-Create a Wokwi demo video showing telemetry, reconnection, and future features.
-Optimize task priorities (e.g., sensor tasks higher, logging lower).
-
-Contributing
-
-Fork the repository.
-Create a branch (git checkout -b feature/new-feature).
-Commit changes (git commit -m "Add new feature").
-Push to the branch (git push origin feature/new-feature).
-Open a Pull Request.
-
-License
-MIT License - see LICENSE for details.
-Contact
-
-GitHub: Fragalis
-Email: [your.email@example.com]
-
+- Implement FreeRTOS queues to share data between all tasks (dht22_task, ldr_task, ntp_task, control_task, thingsboard_task, lcd_task, accelerometer_task, sd_logging_task).
+- Add error handling for sensor failures (DHT22, LDR) and MQTT connection issues.
+- Create a Wokwi demo video showing telemetry, control, and display features.
+- Optimize task priorities (e.g., sensor tasks higher, logging lower).

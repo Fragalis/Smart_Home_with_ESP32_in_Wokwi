@@ -7,6 +7,9 @@
 #include <freertos/queue.h>
 #include <driver/gpio.h>
 #include "esp_adc/adc_oneshot.h"
+#include "driver/spi_common.h"
+#include "esp_lcd_types.h"
+#include "esp_lcd_panel_ops.h"
 #include <esp_err.h>
 #include <esp_log.h>
 #include "esp_system.h"
@@ -14,7 +17,7 @@
 #include <esp_timer.h>
 #include "esp_sntp.h"
 #include <nvs_flash.h>
-#include <math.h>
+#include <math.h>   
 
 // Library dependencies
 #include "Espressif_MQTT_Client.h"
@@ -23,23 +26,36 @@
 // Configuration headers
 #include "../src/config/hardware_config.h"
 #include "../src/config/data_config.h"
-// Tasks headers
+
+// Device tasks headers
 #include "../src/tasks/control_task.h"
 #include "../src/tasks/blink_led_task.h"
 #include "../src/tasks/dht22_task.h"
 #include "../src/tasks/ldr_task.h"
+#include "../src/tasks/ili9341_task.h"
+// Connection tasks headers
 #include "../src/tasks/ntp_task.h"
 #include "../src/tasks/wifi_task.h"
 #include "../src/tasks/thingsboard_task.h"
 
 // GPIO configuration
+// LED and light pins
 #define LED_PIN GPIO_NUM_19
+#define LIGHT_PIN GPIO_NUM_20
+// DHT22 pin
 #define DHT_PIN GPIO_NUM_47
+// LDR pins
 #define LDR_DO_PIN GPIO_NUM_21
 #define LDR_AO_PIN GPIO_NUM_10
+// Stepper motor pins
 #define STEPPER_DIRECTION_PIN GPIO_NUM_21
 #define STEPPER_STEP_PIN GPIO_NUM_11
-#define LIGHT_PIN GPIO_NUM_20
+// ILI9341 SPI pins
+#define SCK_PIN GPIO_NUM_9
+#define DATA_PIN GPIO_NUM_12
+#define MOSI_PIN GPIO_NUM_13
+#define MISO_PIN GPIO_NUM_14
+#define CS_PIN GPIO_NUM_15
 
 // Timer configuration
 #define BLINK_LED_TIMER 1000u

@@ -33,6 +33,18 @@ static void init_nvs_flash(void)
     ESP_ERROR_CHECK(ret);
 }
 
+static void init_spi(void) 
+{
+    spi_bus_config_t spi_cfg = {
+        .mosi_io_num = MOSI_PIN,
+        .miso_io_num = MISO_PIN,
+        .sclk_io_num = SCK_PIN,
+    };
+
+    ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &spi_cfg, SPI_DMA_CH_AUTO));
+    ESP_LOGI(TAG, "SPI bus initialized");
+}
+
 static void init_gpio_pins(void) 
 {
     // Initialize GPIO configuration
@@ -41,7 +53,9 @@ static void init_gpio_pins(void)
                       | (1ULL << LDR_DO_PIN)
                       | (1ULL << STEPPER_DIRECTION_PIN)
                       | (1ULL << STEPPER_STEP_PIN)
-                      | (1ULL << LIGHT_PIN),
+                      | (1ULL << LIGHT_PIN)
+                      | (1ULL << CS_PIN)
+                      | (1ULL << DATA_PIN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
@@ -57,5 +71,6 @@ void hardware_config_init(void)
 {
     init_gpio_pins();
     init_adc();
+    init_spi();
     init_nvs_flash();
 }

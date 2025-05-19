@@ -26,6 +26,7 @@
         "espressif_mqtt_client.h": "c",
         "esp_crt_bundle.h": "c",
         "imqtt_client.h": "c",
-        "cmath": "cpp"
+        "cmath": "cpp",
+        "esp_attr.h": "c"
     }
 }
