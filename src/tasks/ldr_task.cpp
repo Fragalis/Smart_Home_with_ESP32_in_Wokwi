@@ -1,6 +1,7 @@
 #include "ldr_task.h"
 
 static const char *TAG = "LDR";
+static const int BUFFER_SIZE = 32;
 const float GAMMA = 0.7;
 const float RL10 = 50;
 
@@ -19,14 +20,14 @@ void ldr_task(void *arg)
         ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, adc_chan, &val));
         float voltage = val / 4096.0 * 5;
         float resistance = 2000 * voltage / (1 - voltage / 5);
-        ldr_data.luminosity = pow(RL10 * 1e3 * pow(10, GAMMA) / resistance, (1 / GAMMA));
+        ldr_data.luminosity = pow(RL10 * 1e3 * pow(10, GAMMA) / resistance, (1 / GAMMA)) + 0.49999;
 
         // Read the digital output (DO) state
         ldr_data.is_dark = gpio_get_level(LDR_DO_PIN);
 
-        ESP_LOGI(TAG, "LDR Luminosity: %d, is dark: %d", ldr_data.luminosity, ldr_data.is_dark);
-        char json[64];
-        snprintf(json, 64, "{\"luminosity\": %d, \"is_dark\": %d}", ldr_data.luminosity, ldr_data.is_dark);
+        ESP_LOGI(TAG, "Luminosity: %d, is_dark: %d", ldr_data.luminosity, ldr_data.is_dark);
+        char json[BUFFER_SIZE];
+        snprintf(json, BUFFER_SIZE, "{\"lumi\": %d, \"is_dark\": %d}", ldr_data.luminosity, ldr_data.is_dark);
         send_telemetry(json);
         vTaskDelay(pdMS_TO_TICKS(LDR_TIMER));
     }

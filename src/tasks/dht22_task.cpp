@@ -2,6 +2,7 @@
 
 // Datasheet https://cdn.sparkfun.com/assets/f/7/d/9/c/DHT22.pdf
 static const char *TAG = "DHT22";
+static const int BUFFER_SIZE = 36;
 
 static float temperature = 0.0;
 static float humidity = 0.0;
@@ -105,10 +106,10 @@ void dht22_task(void *arg)
             continue;
         }
         // Log the temperature and humidity
-        ESP_LOGI(TAG, "Temperature: %.2f °C, Humidity: %.2f %%", temperature, humidity);
+        ESP_LOGI(TAG, "temperature: %.2f °C, humidity: %.2f %%", temperature, humidity);
 
-        char json[64];
-        snprintf(json, 64, "{\"temperature\": %.2f, \"humidity\": %.2f}", temperature, humidity);
+        char json[BUFFER_SIZE];
+        snprintf(json, BUFFER_SIZE, "{\"temp\": %.2f, \"humi\": %.2f}", temperature, humidity);
         send_telemetry(json);
 
         // Delay for 5 seconds before the next reading

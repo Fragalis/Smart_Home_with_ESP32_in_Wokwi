@@ -11,16 +11,21 @@
 #include "esp_system.h"
 #include "esp_wifi.h"
 #include <esp_timer.h>
+#include "esp_sntp.h"
 #include <nvs_flash.h>
 #include <math.h>
+
+// Library dependencies
 #include "Espressif_MQTT_Client.h"
 #include "ThingsBoard.h"
 
+// Configuration headers
+#include "../src/config/hardware_config.h"
 // Tasks headers
-#include "../src/tasks/hardware_init_task.h"
 #include "../src/tasks/blink_led_task.h"
 #include "../src/tasks/dht22_task.h"
 #include "../src/tasks/ldr_task.h"
+#include "../src/tasks/ntp_task.h"
 #include "../src/tasks/wifi_task.h"
 #include "../src/tasks/thingsboard_task.h"
 
@@ -31,12 +36,13 @@
 #define LDR_AO_PIN GPIO_NUM_10
 
 // Timer configuration
-#define BLINK_LED_TIMER 1000 
-#define DHT22_SEND_TIMER 2000 
-#define DHT22_READ_TIMER 2000
-#define DHT22_DELAY_TIMER 5000 
-#define LDR_TIMER 5000
-#define THINGSBOARD_DELAY_TIMER 1000
-#define THINGSBOARD_LOOP_TIMER 100
+#define BLINK_LED_TIMER 1000u
+#define DHT22_SEND_TIMER 2000u
+#define DHT22_READ_TIMER 2000u
+#define DHT22_DELAY_TIMER 5000u
+#define LDR_TIMER 5000u
+#define THINGSBOARD_DELAY_TIMER 1000u
+#define THINGSBOARD_LOOP_TIMER 100u
+#define NTP_TIMER 10000u
 
 #endif // GLOBAL_H_

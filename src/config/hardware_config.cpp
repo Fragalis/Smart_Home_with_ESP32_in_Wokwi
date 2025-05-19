@@ -1,4 +1,4 @@
-#include "hardware_init_task.h"
+#include "hardware_config.h"
 
 const char *TAG = "HARDWARE";
 
