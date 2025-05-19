@@ -6,7 +6,8 @@ static const char *TAG = "DHT22";
 static float temperature = 0.0;
 static float humidity = 0.0;
 
-static bool await_signal(uint8_t uInterval, int signal) {
+static bool await_signal(uint8_t uInterval, int signal) 
+{
     uint8_t uSeconds = 0;
     while (gpio_get_level(DHT_PIN) != signal) {
         if (uSeconds > uInterval) {
@@ -19,8 +20,8 @@ static bool await_signal(uint8_t uInterval, int signal) {
 }
 
 // Send a signal to the DHT22 sensor and await response
-static esp_err_t send_signal() {
-
+static esp_err_t send_signal() 
+{
     // Set the pin to output mode to send a signal
     // MCU sends a low signal for 2ms and a high signal for 40us
     gpio_set_direction(DHT_PIN, GPIO_MODE_OUTPUT);
@@ -52,7 +53,8 @@ static esp_err_t send_signal() {
 }
 
 // Read data from the DHT22 sensor
-static esp_err_t read_data(float *temp, float *hum) {
+static esp_err_t read_data(float *temp, float *hum) 
+{
     uint8_t data[5] = {0};
     for (uint8_t i = 0; i < 40; ++i) {
         // Sensor send 1 bit of low signal for 50us
@@ -85,20 +87,21 @@ static esp_err_t read_data(float *temp, float *hum) {
     return ESP_OK;
 }
 
-void dht22_task(void *arg) {
+void dht22_task(void *arg) 
+{
     while (1) {
         // Send signal to the DHT22 sensor
         esp_err_t err = send_signal();
         if (err != ESP_OK) {
             ESP_LOGE(TAG, "Failed to send signal");
-            vTaskDelay(pdMS_TO_TICKS(2000));
+            vTaskDelay(pdMS_TO_TICKS(DHT22_SEND_TIMER));
             continue;
         }
         // Read data from the DHT22 sensor
         err = read_data(&temperature, &humidity);
         if (err != ESP_OK) {
             ESP_LOGE(TAG, "Failed to read data");
-            vTaskDelay(pdMS_TO_TICKS(2000));
+            vTaskDelay(pdMS_TO_TICKS(DHT22_READ_TIMER));
             continue;
         }
         // Log the temperature and humidity
@@ -109,7 +112,7 @@ void dht22_task(void *arg) {
         send_telemetry(json);
 
         // Delay for 5 seconds before the next reading
-        vTaskDelay(5000 / portTICK_PERIOD_MS);
+        vTaskDelay(pdMS_TO_TICKS(DHT22_DELAY_TIMER));
     }
 }
 

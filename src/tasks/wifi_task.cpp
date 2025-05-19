@@ -3,21 +3,22 @@
 #define WIFI_SSID "Wokwi-GUEST"
 #define WIFI_PASS ""
 
+static const char *TAG = "WIFI";
 volatile bool wifi_is_connected;
 
 static void event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data) {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
         wifi_is_connected = false;
         esp_wifi_connect();
-        ESP_LOGI("WIFI", "Connecting to %s...", WIFI_SSID);
+        ESP_LOGI(TAG, "Connecting to %s...", WIFI_SSID);
     } else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
         wifi_is_connected = false;
         esp_wifi_connect();
-        ESP_LOGI("WIFI", "Reconnecting...");
+        ESP_LOGI(TAG, "Reconnecting...");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
         wifi_is_connected = true;
-        ESP_LOGI("WIFI", "IP: " IPSTR, IP2STR(&event->ip_info.ip));
+        ESP_LOGI(TAG, "IP: " IPSTR, IP2STR(&event->ip_info.ip));
     }
 }
 
