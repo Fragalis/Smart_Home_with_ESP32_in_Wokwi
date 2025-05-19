@@ -7,6 +7,8 @@ static const int BUFFER_SIZE = 36;
 static float temperature = 0.0;
 static float humidity = 0.0;
 
+QueueHandle_t dht22_queue;
+
 static bool await_signal(uint8_t uInterval, int signal) 
 {
     uint8_t uSeconds = 0;
@@ -90,6 +92,8 @@ static esp_err_t read_data(float *temp, float *hum)
 
 void dht22_task(void *arg) 
 {
+    local_data_t dht22_data;
+    dht22_data.type = DHT22;
     while (1) {
         // Send signal to the DHT22 sensor
         esp_err_t err = send_signal();
@@ -105,12 +109,19 @@ void dht22_task(void *arg)
             vTaskDelay(pdMS_TO_TICKS(DHT22_READ_TIMER));
             continue;
         }
-        // Log the temperature and humidity
-        ESP_LOGI(TAG, "temperature: %.2f °C, humidity: %.2f %%", temperature, humidity);
+        // // Log the temperature and humidity
+        // ESP_LOGI(TAG, "temperature: %.2f °C, humidity: %.2f %%", temperature, humidity);
 
-        char json[BUFFER_SIZE];
-        snprintf(json, BUFFER_SIZE, "{\"temp\": %.2f, \"humi\": %.2f}", temperature, humidity);
-        send_telemetry(json);
+        // Send data to the queue
+        dht22_data.data.dht22_data.temperature = temperature;
+        dht22_data.data.dht22_data.humidity = humidity;
+        if (dht22_queue != NULL && xQueueSend(dht22_queue, &dht22_data, 0) != pdPASS) {
+            ESP_LOGE(TAG, "Failed to send DHT22 data to queue");
+        }
+
+        // char json[BUFFER_SIZE];
+        // snprintf(json, BUFFER_SIZE, "{\"temp\": %.2f, \"humi\": %.2f}", temperature, humidity);
+        // send_telemetry(json);
 
         // Delay for 5 seconds before the next reading
         vTaskDelay(pdMS_TO_TICKS(DHT22_DELAY_TIMER));

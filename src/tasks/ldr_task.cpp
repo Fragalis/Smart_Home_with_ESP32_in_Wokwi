@@ -2,33 +2,40 @@
 
 static const char *TAG = "LDR";
 static const int BUFFER_SIZE = 32;
-const float GAMMA = 0.7;
-const float RL10 = 50;
+static const float GAMMA = 0.7;
+static const float RL10 = 50;
 
-// Structure for LDR data
-typedef struct {
-    int luminosity; // ADC value (0–4095)
-    int is_dark;    // DO state (1 for dark)
-} ldr_data_t;
+static int luminosity = 0;
+static int is_dark = 0;
+
+QueueHandle_t ldr_queue;
 
 void ldr_task(void *arg) 
 {
-    ldr_data_t ldr_data;
+    local_data_t ldr_data;
+    ldr_data.type = LDR;
     while (1) {
         // Read the LDR value from ADC
         int val = 0;
         ESP_ERROR_CHECK(adc_oneshot_read(adc1_handle, adc_chan, &val));
         float voltage = val / 4096.0 * 5;
         float resistance = 2000 * voltage / (1 - voltage / 5);
-        ldr_data.luminosity = pow(RL10 * 1e3 * pow(10, GAMMA) / resistance, (1 / GAMMA)) + 0.49999;
+        luminosity = pow(RL10 * 1e3 * pow(10, GAMMA) / resistance, (1 / GAMMA)) + 0.49999;
 
         // Read the digital output (DO) state
-        ldr_data.is_dark = gpio_get_level(LDR_DO_PIN);
+        is_dark = gpio_get_level(LDR_DO_PIN);
 
-        ESP_LOGI(TAG, "Luminosity: %d, is_dark: %d", ldr_data.luminosity, ldr_data.is_dark);
-        char json[BUFFER_SIZE];
-        snprintf(json, BUFFER_SIZE, "{\"lumi\": %d, \"is_dark\": %d}", ldr_data.luminosity, ldr_data.is_dark);
-        send_telemetry(json);
+        // Send data to the queue
+        ldr_data.data.ldr_data.luminosity = luminosity;
+        ldr_data.data.ldr_data.is_dark = is_dark;
+        if (ldr_queue != NULL && xQueueSend(ldr_queue, &ldr_data, 0) != pdPASS) {
+            ESP_LOGE(TAG, "Failed to send LDR data to queue");
+        }
+        
+        // ESP_LOGI(TAG, "Luminosity: %d, is_dark: %d", ldr_data.luminosity, ldr_data.is_dark);
+        // char json[BUFFER_SIZE];
+        // snprintf(json, BUFFER_SIZE, "{\"lumi\": %d, \"is_dark\": %d}", ldr_data.luminosity, ldr_data.is_dark);
+        // send_telemetry(json);
         vTaskDelay(pdMS_TO_TICKS(LDR_TIMER));
     }
 }

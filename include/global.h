@@ -4,6 +4,7 @@
 // Global libraries
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
+#include <freertos/queue.h>
 #include <driver/gpio.h>
 #include "esp_adc/adc_oneshot.h"
 #include <esp_err.h>
@@ -21,7 +22,9 @@
 
 // Configuration headers
 #include "../src/config/hardware_config.h"
+#include "../src/config/data_config.h"
 // Tasks headers
+#include "../src/tasks/control_task.h"
 #include "../src/tasks/blink_led_task.h"
 #include "../src/tasks/dht22_task.h"
 #include "../src/tasks/ldr_task.h"
@@ -45,7 +48,7 @@
 #define THINGSBOARD_DELAY_TIMER 1000u
 #define THINGSBOARD_LOOP_TIMER 100u
 #define NTP_WAIT_TIMER 1000u
-#define NTP_SYNC_TIMER 10000u
+#define NTP_SYNC_TIMER 15000u
 
 
 #endif // GLOBAL_H_

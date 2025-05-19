@@ -56,7 +56,7 @@ static void init_blink_led(void)
     ESP_LOGI(TAG, "LED initialized");
 }
 
-void hardware_init(void)
+void hardware_config_init(void)
 {
     init_blink_led();
     init_ldr();

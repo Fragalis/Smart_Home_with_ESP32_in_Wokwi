@@ -3,7 +3,10 @@
 extern "C" {
     void app_main(void) {
         // Setup hardware pins
-        hardware_init();
+        hardware_config_init();
+
+        // Initialize data configuration
+        data_config_init();
 
         // Initialize the LED blink task
         blink_led_task_init();
@@ -14,6 +17,9 @@ extern "C" {
         // Initialize the LDR task
         ldr_task_init();
 
+        // Initialize the control task
+        control_task_init();
+        
         // Initialize the WiFi task
         wifi_task_init();
 
