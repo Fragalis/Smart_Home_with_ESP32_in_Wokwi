@@ -15,7 +15,7 @@ void send_telemetry(const char *json) {
 void thingsboard_task(void *arg) {
     while (!wifi_is_connected) {
         ESP_LOGE(TAG, "WiFi not connected");
-        vTaskDelay(pdMS_TO_TICKS(THINGSBOARD_DELAY_TIMER));
+        vTaskDelay(pdMS_TO_TICKS(WIFI_DELAY_TIMER));
     }
     tb.connect(BROKER_URL, TOKEN, PORT);
     while (!tb.connected()) {

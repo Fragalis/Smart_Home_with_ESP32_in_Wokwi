@@ -1,10 +1,34 @@
 #include "ntp_task.h"
+#include "time.h"
 
 static const char *TAG = "NTP";
 
 void ntp_task(void *arg) {
+    while (!wifi_is_connected) {
+        ESP_LOGE(TAG, "WiFi not connected");
+        vTaskDelay(pdMS_TO_TICKS(WIFI_DELAY_TIMER));
+    }
+    esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    esp_sntp_setservername(0, "vn.pool.ntp.org");
+    esp_sntp_init();
+
+    time_t now;
+    struct tm timeinfo;
+    while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET) {
+        ESP_LOGI(TAG, "Waiting for NTP sync...");
+        vTaskDelay(pdMS_TO_TICKS(NTP_WAIT_TIMER));
+    }
+
+    setenv("TZ", "UTC-7", 1);
+    tzset();
+
     while (1) {
-        vTaskDelay(pdMS_TO_TICKS(NTP_TIMER));
+        time(&now);
+        localtime_r(&now, &timeinfo);
+        ESP_LOGI(TAG, "Current time: %04d-%02d-%02d %02d:%02d:%02d",
+                 timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
+                 timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+        vTaskDelay(pdMS_TO_TICKS(NTP_SYNC_TIMER));
     }
 }
 

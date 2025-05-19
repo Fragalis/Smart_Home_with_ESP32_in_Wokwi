@@ -19,6 +19,9 @@ extern "C" {
 
         // Initialize the ThingsBoard task
         thingsboard_task_init();
+
+        // Initialize the NTP task
+        ntp_task_init();
     }
 }
 /*
