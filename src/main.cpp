@@ -4,6 +4,9 @@ extern "C" {
     void app_main(void) {
         // Setup hardware pins
         hardware_config_init();
+        
+        // Initialize the LCD task
+        lcd_task_init();
 
         // Initialize data configuration
         data_config_init();

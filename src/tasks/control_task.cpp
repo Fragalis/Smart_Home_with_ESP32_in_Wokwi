@@ -3,6 +3,7 @@
 static const char *TAG = "CONTROL";
 
 void control_stepper_motor(int state) {
+    gpio_set_level(STEPPER_DIRECTION_PIN, state);
     int step_count = 0;
     while (step_count < MAX_STEPS) {
         step_count++;

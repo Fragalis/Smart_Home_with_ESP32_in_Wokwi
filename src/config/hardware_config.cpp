@@ -3,7 +3,10 @@
 const char *TAG = "HARDWARE";
 
 adc_oneshot_unit_handle_t adc1_handle = NULL;
-adc_channel_t adc_chan = ADC_CHANNEL_0; // Adjust according to your setup
+adc_channel_t adc_chan = ADC_CHANNEL_0;
+
+esp_lcd_panel_io_handle_t io_handle = NULL;
+esp_lcd_panel_handle_t panel_handle = NULL;
 
 static void init_adc(void) 
 {
@@ -33,15 +36,18 @@ static void init_nvs_flash(void)
     ESP_ERROR_CHECK(ret);
 }
 
-static void init_spi(void) 
+static void init_lcd(void) 
 {
-    spi_bus_config_t spi_cfg = {
-        .mosi_io_num = MOSI_PIN,
-        .miso_io_num = MISO_PIN,
-        .sclk_io_num = SCK_PIN,
+    // SPI Bus Configuration
+    spi_bus_config_t buscfg = {
+        .mosi_io_num = LCD_MOSI_PIN,
+        .miso_io_num = LCD_MISO_PIN,
+        .sclk_io_num = LCD_SCLK_PIN,
+        .quadwp_io_num = -1,
+        .quadhd_io_num = -1,
+        .max_transfer_sz = LCD_H_RES * 80 * sizeof(uint16_t),
     };
-
-    ESP_ERROR_CHECK(spi_bus_initialize(SPI2_HOST, &spi_cfg, SPI_DMA_CH_AUTO));
+    ESP_ERROR_CHECK(spi_bus_initialize(LCD_HOST, &buscfg, 0));
     ESP_LOGI(TAG, "SPI bus initialized");
 }
 
@@ -53,9 +59,7 @@ static void init_gpio_pins(void)
                       | (1ULL << LDR_DO_PIN)
                       | (1ULL << STEPPER_DIRECTION_PIN)
                       | (1ULL << STEPPER_STEP_PIN)
-                      | (1ULL << LIGHT_PIN)
-                      | (1ULL << CS_PIN)
-                      | (1ULL << DATA_PIN),
+                      | (1ULL << LIGHT_PIN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
@@ -64,6 +68,17 @@ static void init_gpio_pins(void)
 
     // Configure GPIO pins
     ESP_ERROR_CHECK(gpio_config(&io_conf));
+
+    gpio_config_t lcd_io_conf = {
+        .pin_bit_mask = (1ULL << LCD_DC_PIN)
+                      | (1ULL << LCD_RESET_PIN)
+                      | (1ULL << LCD_LED_PIN),
+        .mode = GPIO_MODE_OUTPUT,
+        .pull_up_en = GPIO_PULLUP_ENABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE
+    };
+    ESP_ERROR_CHECK(gpio_config(&lcd_io_conf));
     ESP_LOGI(TAG, "GPIO pins initialized");
 }
 
@@ -71,6 +86,6 @@ void hardware_config_init(void)
 {
     init_gpio_pins();
     init_adc();
-    init_spi();
+    init_lcd();
     init_nvs_flash();
 }

@@ -27,6 +27,16 @@
         "esp_crt_bundle.h": "c",
         "imqtt_client.h": "c",
         "cmath": "cpp",
-        "esp_attr.h": "c"
+        "esp_attr.h": "c",
+        "lv_conf_internal.h": "c",
+        "spi_common.h": "c",
+        "esp_lcd_ili9341.h": "c",
+        "soc_caps.h": "c",
+        "random": "cpp",
+        "limits": "cpp",
+        "semaphore": "cpp",
+        "compare": "cpp",
+        "cstdint": "cpp",
+        "cstdlib": "cpp"
     }
 }
