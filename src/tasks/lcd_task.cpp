@@ -76,7 +76,7 @@ DRAM_ATTR static const lcd_init_cmd_t ili_init_cmds[] = {
  * mode for higher speed. The overhead of interrupt transactions is more than
  * just waiting for the transaction to complete.
  */
-void lcd_cmd(spi_device_handle_t spi, const uint8_t cmd, bool keep_cs_active)
+void lcd_cmd(const uint8_t cmd, bool keep_cs_active)
 {
     esp_err_t ret;
     spi_transaction_t t;
@@ -98,7 +98,7 @@ void lcd_cmd(spi_device_handle_t spi, const uint8_t cmd, bool keep_cs_active)
  * mode for higher speed. The overhead of interrupt transactions is more than
  * just waiting for the transaction to complete.
  */
-void lcd_data(spi_device_handle_t spi, const uint8_t *data, int len)
+void lcd_data(const uint8_t *data, int len)
 {
     esp_err_t ret;
     spi_transaction_t t;
@@ -174,7 +174,7 @@ void pretty_effect_calc_lines(uint16_t *dest, int line, int frame, int linect)
  * sent faster (compared to calling spi_device_transmit several times), and at
  * the mean while the lines for next transactions can get calculated.
  */
-static void send_lines(spi_device_handle_t spi, int ypos, uint16_t *linedata)
+static void send_lines(int ypos, uint16_t *linedata)
 {
     esp_err_t ret;
     int x;
@@ -224,7 +224,7 @@ static void send_lines(spi_device_handle_t spi, int ypos, uint16_t *linedata)
     //send_line_finish, which will wait for the transfers to be done and check their status.
 }
 
-static void send_line_finish(spi_device_handle_t spi)
+static void send_line_finish()
 {
     spi_transaction_t *rtrans;
     esp_err_t ret;
@@ -239,7 +239,7 @@ static void send_line_finish(spi_device_handle_t spi)
 //Simple routine to generate some patterns and send them to the LCD. Don't expect anything too
 //impressive. Because the SPI driver handles transactions in the background, we can calculate the next line
 //while the previous one is being sent.
-static void display_pretty_colors(spi_device_handle_t spi)
+static void display_pretty_colors()
 {
     uint16_t *lines[2];
     //Allocate memory for the pixel buffers
@@ -260,13 +260,13 @@ static void display_pretty_colors(spi_device_handle_t spi)
             pretty_effect_calc_lines(lines[calc_line], y, frame, LCD_DRAW_BUFFER_SIZE);
             //Finish up the sending process of the previous line, if any
             if (sending_line != -1) {
-                send_line_finish(spi);
+                send_line_finish();
             }
             //Swap sending_line and calc_line
             sending_line = calc_line;
             calc_line = (calc_line == 1) ? 0 : 1;
             //Send the line we currently calculated.
-            send_lines(spi, y, lines[sending_line]);
+            send_lines(y, lines[sending_line]);
             //The line set is queued up for sending now; the actual sending happens in the
             //background. We can go on to calculate the next line set as long as we do not
             //touch line[sending_line]; the SPI sending process is still reading from that.
@@ -274,24 +274,8 @@ static void display_pretty_colors(spi_device_handle_t spi)
     }
 }
 
-void lcd_task_init() {
-    spi_device_handle_t spi;
-    spi_device_interface_config_t devcfg = {
-        .mode = 0,                              //SPI mode 0
-        .clock_speed_hz = LCD_CLOCK_SPEED_HZ,   //Clock out at 10 MHz
-        .spics_io_num = LCD_CS_PIN,             //CS pin
-        .queue_size = 7,                        //We want to be able to queue 7 transactions at a time
-        .pre_cb = lcd_spi_pre_transfer_callback, //Specify pre-transfer callback to handle D/C line
-    };   
-    ESP_ERROR_CHECK(spi_bus_add_device(LCD_SPI_HOST, &devcfg, &spi));
-
-    //Initialize non-SPI GPIOs
-    gpio_config_t io_conf = {};
-    io_conf.pin_bit_mask = ((1ULL << LCD_DC_PIN) | (1ULL << LCD_RST_PIN) | (1ULL << LCD_LED_PIN));
-    io_conf.mode = GPIO_MODE_OUTPUT;
-    io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
-    gpio_config(&io_conf);
-
+void lcd_task_init() 
+{
     //Reset the display
     gpio_set_level(LCD_RST_PIN, 0);
     vTaskDelay(100 / portTICK_PERIOD_MS);
@@ -301,8 +285,8 @@ void lcd_task_init() {
     //Send all the commands
     int cmd = 0;
     while (ili_init_cmds[cmd].databytes != 0xff) {
-        lcd_cmd(spi, ili_init_cmds[cmd].cmd, false);
-        lcd_data(spi, ili_init_cmds[cmd].data, ili_init_cmds[cmd].databytes & 0x1F);
+        lcd_cmd(ili_init_cmds[cmd].cmd, false);
+        lcd_data(ili_init_cmds[cmd].data, ili_init_cmds[cmd].databytes & 0x1F);
         if (ili_init_cmds[cmd].databytes & 0x80) {
             vTaskDelay(100 / portTICK_PERIOD_MS);
         }
@@ -311,5 +295,5 @@ void lcd_task_init() {
 
     ///Enable backlight
     gpio_set_level(LCD_LED_PIN, 1);
-    display_pretty_colors(spi);
+    display_pretty_colors();
 }
