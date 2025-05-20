@@ -39,6 +39,9 @@
 #include "../src/tasks/wifi_task.h"
 #include "../src/tasks/thingsboard_task.h"
 
+// Utils headers
+#include "../src/utils/lcd_helper.h"
+
 // GPIO configuration
 // LED and light pins
 #define LED_PIN                 GPIO_NUM_19
@@ -75,7 +78,7 @@
 #define CONTROL_TIMER           1000u
 
 // LCD configuration
-#define LCD_SPI_HOST            SPI2_HOST
+#define LCD_SPI_HOST            SPI1_HOST 
 #define LCD_CLOCK_SPEED_HZ      10*1000*1000u
 #define LCD_DRAW_BUFFER_SIZE    16
 #define LCD_WIDTH               240

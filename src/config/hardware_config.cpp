@@ -38,24 +38,24 @@ static void init_nvs_flash(void)
 
 static void init_lcd(void) 
 {
-    spi_bus_config_t spi_conf = {
-        .mosi_io_num = LCD_MOSI_PIN,
-        .miso_io_num = LCD_MISO_PIN,
-        .sclk_io_num = LCD_SCK_PIN,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-        .max_transfer_sz = LCD_DRAW_BUFFER_SIZE * 320 * 2 + 8,
-    };
-    spi_bus_initialize(LCD_SPI_HOST, &spi_conf, SPI_DMA_CH_AUTO);
+    // spi_bus_config_t spi_conf = {
+    //     .mosi_io_num = LCD_MOSI_PIN,
+    //     .miso_io_num = LCD_MISO_PIN,
+    //     .sclk_io_num = LCD_SCK_PIN,
+    //     .quadwp_io_num = -1,
+    //     .quadhd_io_num = -1,
+    //     .max_transfer_sz = LCD_DRAW_BUFFER_SIZE * 320 * 2 + 8,
+    // };
+    // spi_bus_initialize(LCD_SPI_HOST, &spi_conf, SPI_DMA_CH_AUTO);
 
-    spi_device_interface_config_t devcfg = {
-        .mode = 0,                              //SPI mode 0
-        .clock_speed_hz = LCD_CLOCK_SPEED_HZ,   //Clock out at 10 MHz
-        .spics_io_num = LCD_CS_PIN,             //CS pin
-        .queue_size = 7,                        //We want to be able to queue 7 transactions at a time
-        .pre_cb = lcd_spi_pre_transfer_callback, //Specify pre-transfer callback to handle D/C line
-    };   
-    ESP_ERROR_CHECK(spi_bus_add_device(LCD_SPI_HOST, &devcfg, &spi));
+    // spi_device_interface_config_t devcfg = {
+    //     .mode = 0,                              //SPI mode 0
+    //     .clock_speed_hz = LCD_CLOCK_SPEED_HZ,   //Clock out at 10 MHz
+    //     .spics_io_num = LCD_CS_PIN,             //CS pin
+    //     .queue_size = 7,                        //We want to be able to queue 7 transactions at a time
+    //     .pre_cb = lcd_spi_pre_transfer_callback, //Specify pre-transfer callback to handle D/C line
+    // };   
+    // ESP_ERROR_CHECK(spi_bus_add_device(LCD_SPI_HOST, &devcfg, &spi));
 }
 
 static void init_gpio_pins(void) 
@@ -65,10 +65,10 @@ static void init_gpio_pins(void)
         .pin_bit_mask = (1ULL << LED_PIN)
                       | (1ULL << STEPPER_DIRECTION_PIN)
                       | (1ULL << STEPPER_STEP_PIN)
-                      | (1ULL << LIGHT_PIN)
-                      | (1ULL << LCD_DC_PIN) 
-                      | (1ULL << LCD_RST_PIN) 
-                      | (1ULL << LCD_LED_PIN),
+                      | (1ULL << LIGHT_PIN),
+                    //   | (1ULL << LCD_DC_PIN) 
+                    //   | (1ULL << LCD_RST_PIN) 
+                    //   | (1ULL << LCD_LED_PIN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_ENABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
