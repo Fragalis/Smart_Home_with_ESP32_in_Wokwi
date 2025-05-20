@@ -1,0 +1,24 @@
+.PHONY: unittest check clean_unittest
+
+CPPUTEST_HOME ?= /usr/local
+
+CXXFLAGS += -I$(CPPUTEST_HOME)/include -DCPPUTEST_MEM_LEAK_DETECTION_DISABLED
+
+OBJ_UNIT_TEST = \
+        unittest/main.o \
+        unittest/ssd1306_tests.o \
+        unittest/ssd1331_tests.o \
+        unittest/utils/utils.o \
+
+unittest: $(OBJ_UNIT_TEST) library ssd1306_sdl
+	$(CXX) $(CPPFLAGS) -o $(BLD)/unit_test -L$(BLD) -L$(CPPUTEST_HOME)/lib $(OBJ_UNIT_TEST) -lm -pthread \
+	   -llcdgfx -lssd1306_sdl $(shell sdl2-config --libs) $(shell pkg-config --libs cpputest)
+
+# make ARCH=linux EXTRA_CPPFLAGS="--coverage" SDL_EMULATION=y check
+check: unittest
+	$(BLD)/unit_test
+
+clean: clean_unittest
+
+clean_unittest:
+	rm -rf $(OBJ_UNIT_TEST) $(OBJ_UNIT_TEST:.o=.gcno) $(OBJ_UNIT_TEST:.o=.gcda)

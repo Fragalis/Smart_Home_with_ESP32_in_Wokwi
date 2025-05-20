@@ -14,7 +14,7 @@ Features
 - Uses FreeRTOS tasks for modular operation: WiFi, ThingsBoard, sensor reading, control, and NTP.
 - Simulates functionality in Wokwi with debugging via Serial Monitor.
 - Implemented in C++ to support ArduinoJson and ThingsBoard SDK.
-- Initializes ILI9341 TFT LCD (SPI: GPIO 13 MOSI, 9 SCK, 15 CS) for future display of sensor data.
+- Initializes ILI9341 TFT LCD (SPI: GPIO 13 MOSI, 9 SCK, 15 CS) and displays sensor data using lcdgfx library.
 
 Hardware
 - ESP32-S3-DevKitM-1: Core microcontroller (4 MB flash, 512 KB RAM).
@@ -22,7 +22,7 @@ Hardware
 - LDR: GPIO 10 (AO), 21 (DO) for luminosity, planned outdoors.
 - Stepper Motor: GPIO 11 (step), 21 (direction) for curtains.
 - Light: GPIO 20 for ambient control.
-- ILI9341 TFT LCD: SPI (GPIO 13 MOSI, 9 SCK, 15 CS).
+- ILI9341 TFT LCD: SPI (GPIO 13 MOSI, 9 SCK, 15 CS, 12 DC, 16 RESET).
 
 Software Architecture
 - WiFi Task: Connects to "Wokwi-GUEST" and manages reconnection.
@@ -31,6 +31,8 @@ Software Architecture
 - LDR Task: Reads and queues luminosity data.
 - NTP Task: Fetches and queues time data.
 - Control Task: Manages curtains and lights based on time and luminosity.
+- lcd_task: Displays sensor data on ILI9341 using lcdgfx library.
+- DataStorage Class: Manages global storage of latest LDR, DHT22, and NTP data.
 
 Real-World Applications
 - Smart Home Automation: Controls curtains and lights based on time and light levels.
@@ -38,9 +40,18 @@ Real-World Applications
 - Security: Future motion detection for intrusion alerts or automation triggers.
 - Data Logging: Offline storage for environmental analysis or compliance.
 
+Achievements (Up to May 20, 2025)
+- Successfully implemented DataStorage class to store latest LDR, DHT22, and NTP data in a global, read-only structure.
+- Transitioned to lcdgfx library for ILI9341 display, enabling text rendering with customizable fonts (e.g., ssd1306xled_font8x16).
+- Developed prototype lcd_task to display static text with styles (normal, bold, italic) using lcdgfx.
+- Replaced queue-based data sharing with DataStorage, resolving conflicts between lcd_task and control_task.
+- Verified DataStorage functionality with producer tasks (dht22_task, ldr_task, ntp_task).
+- Maintained system stability with flash usage at ~54% (950,000 bytes of 1.75 MB) and RAM at 12.0% (38,000 bytes) with PSRAM.
+
 Planned Features
 - ILI9341 TFT LCD (SPI):
-  - Create lcd_task to display LDR/DHT22 data every 5 seconds with custom text rendering.
+  - Complete lcd_task to display LDR/DHT22/NTP data every 5 seconds using DataStorage and lcdgfx library.
+  - Test LCD display in Wokwi with live data.
 - Temperature-Based Control (DHT22):
   - Close curtains and toggle a fan/AC (GPIO 13) if temperature > 32°C during 7 AM-7 PM.
 - Manual Overrides:
@@ -55,7 +66,19 @@ Planned Features
   - Use ESP-IDF’s vfs.h and sdmmc.h for file operations.
 
 Future Improvements
-- Implement FreeRTOS queues to share data between all tasks (dht22_task, ldr_task, ntp_task, control_task, thingsboard_task, lcd_task, accelerometer_task, sd_logging_task).
+- Optimize task priorities (e.g., sensor tasks higher, logging lower) using DataStorage for data sharing.
 - Add error handling for sensor failures (DHT22, LDR) and MQTT connection issues.
 - Create a Wokwi demo video showing telemetry, control, and display features.
-- Optimize task priorities (e.g., sensor tasks higher, logging lower).
+- Update GitHub README with state diagram, changelog, and DataStorage details.
+- Further optimize flash usage to target <48% by consolidating logging.
+
+Notes
+-----
+- MQTT broker is app.coreiot.io.
+- Using C++ files for ArduinoJson/ThingsBoard SDK compatibility.
+- Test each feature in Wokwi with ESP LOGs.
+- ILI9341 will show lighting status (e.g., "Lights On" when dark) and sensor data (e.g., "LDR: 123 Temp: 25.5°C Time: 12:30").
+- DHT22 GPIO 47 config adjusted due to logic control.
+- New control logic: Light on if dark (GPIO 20), stepper motor for curtains 7 AM-5 PM (GPIO 11, 21).
+- LDR planned for outdoor placement to capture environmental luminosity.
+- DataStorage class provides read-only access to latest data for all tasks, with JSON parsing for ThingsBoard.
