@@ -1,31 +1,66 @@
 #include "data_config.h"
 
-static const char *TAG = "DATA";
+DataStorage::DataStorage() {
+    dht22_data.dht22_data = {
+        .temperature = 0,
+        .humidity = 0,
+    };
 
-QueueHandle_t dht22_queue;
-QueueHandle_t ldr_queue;
-QueueHandle_t ntp_queue;
+    ldr_data.ldr_data = {
+        .luminosity = 0,
+    };
 
-void data_config_init(void) {
-    // Initialize the queues for DHT22, LDR, and NTP tasks
-    dht22_queue = xQueueCreate(10, sizeof(local_data_t));
-    if (dht22_queue == NULL) {
-        ESP_LOGE(TAG, "Failed to create dht22_queue");
-        return;
-    }
-    ESP_LOGI(TAG, "dht22_queue initialized");
-
-    ldr_queue = xQueueCreate(10, sizeof(local_data_t));
-    if (ldr_queue == NULL) {
-        ESP_LOGE(TAG, "Failed to create ldr_queue");
-        return;
-    }
-    ESP_LOGI(TAG, "ldr_queue initialized");
-
-    ntp_queue = xQueueCreate(1, sizeof(local_data_t));
-    if (ntp_queue == NULL) {
-        ESP_LOGE(TAG, "Failed to create ntp_queue");
-        return;
-    }
-    ESP_LOGI(TAG, "ntp_queue initialized");
+    ntp_data.ntp_data = {
+        .minute = 0,
+        .hour = 0,
+        .day = 0,
+        .month = 0,
+        .year = 0,
+    };
 }
+
+void DataStorage::set_dht22_data(const local_data_t &data) {
+    dht22_data.dht22_data.humidity = data.dht22_data.humidity;
+    dht22_data.dht22_data.temperature = data.dht22_data.temperature;
+}
+
+void DataStorage::set_dht22_data(const float &temperature, const float &humidity) {
+    dht22_data.dht22_data.humidity = humidity;
+    dht22_data.dht22_data.temperature = temperature;
+}
+
+void DataStorage::set_ldr_data(const local_data_t &data) {
+    ldr_data.ldr_data.luminosity = data.ldr_data.luminosity;
+}
+
+void DataStorage::set_ldr_data(const uint32_t &luminosity) {
+    ldr_data.ldr_data.luminosity = luminosity;
+}
+
+void DataStorage::set_ntp_data(const local_data_t &data) {
+    ntp_data.ntp_data.minute = data.ntp_data.minute;
+    ntp_data.ntp_data.hour = data.ntp_data.hour;
+    ntp_data.ntp_data.day = data.ntp_data.day;
+    ntp_data.ntp_data.month = data.ntp_data.month;
+    ntp_data.ntp_data.year = data.ntp_data.year;
+}
+
+void DataStorage::set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint8_t &year) {
+    ntp_data.ntp_data.minute = minute;
+    ntp_data.ntp_data.hour = hour;
+    ntp_data.ntp_data.day = day;
+    ntp_data.ntp_data.month = month;
+    ntp_data.ntp_data.year = year;
+}
+
+local_data_t DataStorage::get_dht22_data() {
+    return dht22_data;
+}
+local_data_t DataStorage::get_ldr_data() {
+    return ldr_data;
+}
+local_data_t DataStorage::get_ntp_data() {
+    return ntp_data;
+}
+
+DataStorage data_storage;

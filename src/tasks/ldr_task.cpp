@@ -9,8 +9,6 @@ static uint32_t luminosity = 0;
 
 void ldr_task(void *arg) 
 {
-    local_data_t ldr_data;
-    ldr_data.type = LDR;
     while (1) {
         // Read the LDR value from ADC
         int val = 0;
@@ -19,11 +17,8 @@ void ldr_task(void *arg)
         float resistance = 2000 * voltage / (1 - voltage / 5);
         luminosity = pow(RL10 * 1e3 * pow(10, GAMMA) / resistance, (1 / GAMMA)) + 0.49999;
 
-        // Send data to the queue
-        ldr_data.data.ldr_data.luminosity = luminosity;
-        if (ldr_queue != NULL && xQueueSend(ldr_queue, &ldr_data, 0) != pdPASS) {
-            ESP_LOGE(TAG, "Failed to send LDR data to queue");
-        }
+        // Store data
+        data_storage.set_ldr_data(luminosity);
         
         // ESP_LOGI(TAG, "Luminosity: %d, is_dark: %d", ldr_data.luminosity, ldr_data.is_dark);
         // char json[BUFFER_SIZE];

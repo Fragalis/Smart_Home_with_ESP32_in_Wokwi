@@ -21,21 +21,14 @@ void ntp_task(void *arg) {
     setenv("TZ", "UTC-7", 1);
     tzset();
     
-    local_data_t ntp_data;
-    ntp_data.type = NTP;
     struct tm timeinfo;
     time_t now;
     while (1) {
         time(&now);
         localtime_r(&now, &timeinfo);
-        ntp_data.data.ntp_data.minute = timeinfo.tm_min;
-        ntp_data.data.ntp_data.hour = timeinfo.tm_hour;
-        ntp_data.data.ntp_data.day = timeinfo.tm_mday;
-        ntp_data.data.ntp_data.month = timeinfo.tm_mon;
-        ntp_data.data.ntp_data.year = timeinfo.tm_year;
-        if (ntp_queue != NULL && xQueueSend(ntp_queue, &ntp_data, 0) != pdPASS) {
-            ESP_LOGE(TAG, "Failed to send NTP data to queue");
-        }
+
+        // Store data
+        data_storage.set_ntp_data(timeinfo.tm_min, timeinfo.tm_hour, timeinfo.tm_mday, timeinfo.tm_mon, timeinfo.tm_year);
 
         vTaskDelay(pdMS_TO_TICKS(NTP_SYNC_TIMER));
     }

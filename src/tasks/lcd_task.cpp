@@ -1,10 +1,8 @@
 #include "lcd_task.h"
-#include "lcdgfx.h"
-#include "lcdgfx_gui.h"
 
 DisplayILI9341_240x320x16_SPI display(LCD_RST_PIN, {LCD_SPI_HOST, LCD_CS_PIN, LCD_DC_PIN, LCD_CLOCK_SPEED_HZ, LCD_SCK_PIN, LCD_MOSI_PIN});
 
-static void textDemo()
+static void lcd_fetch_data_task()
 {
     display.setFixedFont(ssd1306xled_font6x8);
     display.clear();
@@ -23,10 +21,10 @@ static void textDemo()
 
 void lcd_task_init() {
     display.begin();
-    display.setFixedFont(ssd1306xled_font6x8);
+    display.setFixedFont(ssd1306xled_font8x16);
 
     while (1) {
-        textDemo();
+        lcd_fetch_data_task();
         display.fill( 0x00 );
         display.setColor(RGB_COLOR16(255,255,255));
         vTaskDelay(pdMS_TO_TICKS(1000));

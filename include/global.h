@@ -23,6 +23,8 @@
 // Library dependencies
 #include "Espressif_MQTT_Client.h"
 #include "ThingsBoard.h"
+#include "lcdgfx.h"
+#include "lcdgfx_gui.h"
 
 // Configuration headers
 #include "../src/config/hardware_config.h"
@@ -38,9 +40,6 @@
 #include "../src/tasks/ntp_task.h"
 #include "../src/tasks/wifi_task.h"
 #include "../src/tasks/thingsboard_task.h"
-
-// Utils headers
-#include "../src/utils/lcd_helper.h"
 
 // GPIO configuration
 // LED and light pins
@@ -80,9 +79,6 @@
 // LCD configuration
 #define LCD_SPI_HOST            SPI1_HOST 
 #define LCD_CLOCK_SPEED_HZ      10*1000*1000u
-#define LCD_DRAW_BUFFER_SIZE    16
-#define LCD_WIDTH               240
-#define LCD_HEIGHT              320
 
 // Threshold configuration
 #define LIGHT_THRESHOLD         100     // Threshold to toggle the lamp

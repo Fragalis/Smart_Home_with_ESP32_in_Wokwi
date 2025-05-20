@@ -30,14 +30,8 @@ void control_task(void *arg) {
     uint8_t hour = 0;
     while (1) {
         // Get data
-        if (ntp_queue != NULL && xQueueReceive(ntp_queue, &ntp_data, 0) == pdTRUE) {
-            hour = ntp_data.data.ntp_data.hour;
-            // ESP_LOGI(TAG, "Current hour: %d", hour);
-        }
-        if (ldr_queue != NULL && xQueueReceive(ldr_queue, &ldr_data, 0) == pdTRUE) {
-            luminosity = ldr_data.data.ldr_data.luminosity;
-            // ESP_LOGI(TAG, "Luminosity: %lu", luminosity);
-        }
+        luminosity = data_storage.get_ldr_data().ldr_data.luminosity;
+        hour = data_storage.get_ntp_data().ntp_data.hour;
         switch (curtain_state) {
             case OPEN:
                 // Close the curtain if it's dark or after 5 PM

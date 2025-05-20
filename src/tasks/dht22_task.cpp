@@ -90,8 +90,6 @@ static esp_err_t read_data(float *temp, float *hum)
 
 void dht22_task(void *arg) 
 {
-    local_data_t dht22_data;
-    dht22_data.type = DHT22;
     while (1) {
         // Send signal to the DHT22 sensor
         esp_err_t err = send_signal();
@@ -110,12 +108,8 @@ void dht22_task(void *arg)
         // // Log the temperature and humidity
         // ESP_LOGI(TAG, "temperature: %.2f °C, humidity: %.2f %%", temperature, humidity);
 
-        // Send data to the queue
-        dht22_data.data.dht22_data.temperature = temperature;
-        dht22_data.data.dht22_data.humidity = humidity;
-        if (dht22_queue != NULL && xQueueSend(dht22_queue, &dht22_data, 0) != pdPASS) {
-            ESP_LOGE(TAG, "Failed to send DHT22 data to queue");
-        }
+        // Store data
+        data_storage.set_dht22_data(temperature, humidity);
 
         // char json[BUFFER_SIZE];
         // snprintf(json, BUFFER_SIZE, "{\"temp\": %.2f, \"humi\": %.2f}", temperature, humidity);

@@ -4,7 +4,6 @@ extern "C" {
     void app_main(void) {
         // Setup configurations
         hardware_config_init();
-        data_config_init();
 
         // Setup device tasks
         blink_led_task_init();
