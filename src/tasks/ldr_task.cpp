@@ -5,8 +5,7 @@ static const int BUFFER_SIZE = 32;
 static const float GAMMA = 0.7;
 static const float RL10 = 50;
 
-static int luminosity = 0;
-static int is_dark = 0;
+static uint32_t luminosity = 0;
 
 void ldr_task(void *arg) 
 {
@@ -20,12 +19,8 @@ void ldr_task(void *arg)
         float resistance = 2000 * voltage / (1 - voltage / 5);
         luminosity = pow(RL10 * 1e3 * pow(10, GAMMA) / resistance, (1 / GAMMA)) + 0.49999;
 
-        // Read the digital output (DO) state
-        is_dark = gpio_get_level(LDR_DO_PIN);
-
         // Send data to the queue
         ldr_data.data.ldr_data.luminosity = luminosity;
-        ldr_data.data.ldr_data.is_dark = is_dark;
         if (ldr_queue != NULL && xQueueSend(ldr_queue, &ldr_data, 0) != pdPASS) {
             ESP_LOGE(TAG, "Failed to send LDR data to queue");
         }

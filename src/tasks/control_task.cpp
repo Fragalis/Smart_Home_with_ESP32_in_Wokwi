@@ -26,17 +26,17 @@ enum CURTAIN_STATE {
 void control_task(void *arg) {
     CURTAIN_STATE curtain_state = OPEN; // Initial state
     local_data_t ldr_data, ntp_data;
-    int luminosity = 1;
-    int hour = 0;
+    uint32_t luminosity = 1;
+    uint8_t hour = 0;
     while (1) {
         // Get data
         if (ntp_queue != NULL && xQueueReceive(ntp_queue, &ntp_data, 0) == pdTRUE) {
-            hour = ntp_data.data.ntp_data.hour; // Get current hour
-            ESP_LOGI(TAG, "Current hour: %d", hour);
+            hour = ntp_data.data.ntp_data.hour;
+            // ESP_LOGI(TAG, "Current hour: %d", hour);
         }
         if (ldr_queue != NULL && xQueueReceive(ldr_queue, &ldr_data, 0) == pdTRUE) {
-            luminosity = ldr_data.data.ldr_data.luminosity; // Get luminosity
-            ESP_LOGI(TAG, "Luminosity: %d", luminosity);
+            luminosity = ldr_data.data.ldr_data.luminosity;
+            // ESP_LOGI(TAG, "Luminosity: %lu", luminosity);
         }
         switch (curtain_state) {
             case OPEN:

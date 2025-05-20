@@ -2,34 +2,20 @@
 
 extern "C" {
     void app_main(void) {
-        // Setup hardware pins
+        // Setup configurations
         hardware_config_init();
-        
-        // Initialize the LCD task
-        lcd_task_init();
-
-        // Initialize data configuration
         data_config_init();
 
-        // Initialize the LED blink task
+        // Setup device tasks
         blink_led_task_init();
-
-        // Initialize the DHT22 task
         dht22_task_init();
-
-        // Initialize the LDR task
         ldr_task_init();
-
-        // Initialize the control task
         control_task_init();
+        lcd_task_init();
         
-        // Initialize the WiFi task
+        // Setup connection tasks
         wifi_task_init();
-
-        // Initialize the ThingsBoard task
         thingsboard_task_init();
-
-        // Initialize the NTP task
         ntp_task_init();
     }
 }

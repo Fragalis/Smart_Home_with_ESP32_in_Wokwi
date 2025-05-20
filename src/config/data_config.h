@@ -13,11 +13,14 @@ typedef struct {
             float humidity;
         } dht22_data;
         struct {
-            int luminosity; // ADC value (0–4095)
-            int is_dark;    // DO state (1 for dark)
+            uint32_t luminosity;
         } ldr_data;
         struct {
-            int hour;
+            uint8_t minute;
+            uint8_t hour;
+            uint8_t day;
+            uint8_t month;
+            uint8_t year;
         } ntp_data;
     } data;
 } local_data_t;

@@ -38,17 +38,15 @@ static void init_nvs_flash(void)
 
 static void init_lcd(void) 
 {
-    // SPI Bus Configuration
-    spi_bus_config_t buscfg = {
+    spi_bus_config_t spi_conf = {
         .mosi_io_num = LCD_MOSI_PIN,
         .miso_io_num = LCD_MISO_PIN,
-        .sclk_io_num = LCD_SCLK_PIN,
+        .sclk_io_num = LCD_SCK_PIN,
         .quadwp_io_num = -1,
         .quadhd_io_num = -1,
-        .max_transfer_sz = LCD_H_RES * 80 * sizeof(uint16_t),
+        .max_transfer_sz = LCD_DRAW_BUFFER_SIZE * 320 * 2 + 8,
     };
-    ESP_ERROR_CHECK(spi_bus_initialize(LCD_HOST, &buscfg, 0));
-    ESP_LOGI(TAG, "SPI bus initialized");
+    spi_bus_initialize(LCD_SPI_HOST, &spi_conf, SPI_DMA_CH_AUTO);
 }
 
 static void init_gpio_pins(void) 
@@ -68,18 +66,6 @@ static void init_gpio_pins(void)
 
     // Configure GPIO pins
     ESP_ERROR_CHECK(gpio_config(&io_conf));
-
-    gpio_config_t lcd_io_conf = {
-        .pin_bit_mask = (1ULL << LCD_DC_PIN)
-                      | (1ULL << LCD_RESET_PIN)
-                      | (1ULL << LCD_LED_PIN),
-        .mode = GPIO_MODE_OUTPUT,
-        .pull_up_en = GPIO_PULLUP_ENABLE,
-        .pull_down_en = GPIO_PULLDOWN_DISABLE,
-        .intr_type = GPIO_INTR_DISABLE
-    };
-    ESP_ERROR_CHECK(gpio_config(&lcd_io_conf));
-    ESP_LOGI(TAG, "GPIO pins initialized");
 }
 
 void hardware_config_init(void)

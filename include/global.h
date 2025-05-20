@@ -51,14 +51,14 @@
 // Stepper motor pins
 #define STEPPER_DIRECTION_PIN   GPIO_NUM_21
 #define STEPPER_STEP_PIN        GPIO_NUM_11
-// ILI9341 SPI pins
-#define LCD_MOSI_PIN            GPIO_NUM_13
-#define LCD_MISO_PIN            GPIO_NUM_14
-#define LCD_SCLK_PIN            GPIO_NUM_9
+// ILI9341 pins
 #define LCD_CS_PIN              GPIO_NUM_15
 #define LCD_DC_PIN              GPIO_NUM_12
-#define LCD_RESET_PIN           GPIO_NUM_16
+#define LCD_MOSI_PIN            GPIO_NUM_13
+#define LCD_SCK_PIN             GPIO_NUM_9
 #define LCD_LED_PIN             GPIO_NUM_17
+#define LCD_MISO_PIN            GPIO_NUM_14
+#define LCD_RST_PIN             GPIO_NUM_16
 
 // Timer configuration
 #define BLINK_LED_TIMER         1000u
@@ -75,14 +75,11 @@
 #define CONTROL_TIMER           1000u
 
 // LCD configuration
-#define LCD_HOST                SPI2_HOST
-#define LCD_H_RES               240
-#define LCD_V_RES               320
-#define LCD_PIXEL_CLOCK_HZ      (20 * 1000 * 1000)
-#define LCD_CMD_BITS            8
-#define LCD_PARAM_BITS          8
-#define LCD_LIGHT_ON_LEVEL      1
-#define LCD_DRAW_BUFFER_LINES   20 // number of display lines in each draw buffer
+#define LCD_SPI_HOST            SPI2_HOST
+#define LCD_CLOCK_SPEED_HZ      10*1000*1000u
+#define LCD_DRAW_BUFFER_SIZE    16
+#define LCD_WIDTH               240
+#define LCD_HEIGHT              320
 
 // Threshold configuration
 #define LIGHT_THRESHOLD         100     // Threshold to toggle the lamp

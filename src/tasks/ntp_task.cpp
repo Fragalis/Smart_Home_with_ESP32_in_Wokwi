@@ -28,7 +28,11 @@ void ntp_task(void *arg) {
     while (1) {
         time(&now);
         localtime_r(&now, &timeinfo);
-        ntp_data.data.ntp_data.hour = timeinfo.tm_hour;       
+        ntp_data.data.ntp_data.minute = timeinfo.tm_min;
+        ntp_data.data.ntp_data.hour = timeinfo.tm_hour;
+        ntp_data.data.ntp_data.day = timeinfo.tm_mday;
+        ntp_data.data.ntp_data.month = timeinfo.tm_mon;
+        ntp_data.data.ntp_data.year = timeinfo.tm_year;
         if (ntp_queue != NULL && xQueueSend(ntp_queue, &ntp_data, 0) != pdPASS) {
             ESP_LOGE(TAG, "Failed to send NTP data to queue");
         }
