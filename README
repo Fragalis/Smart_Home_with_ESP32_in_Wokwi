@@ -33,11 +33,6 @@ This project is an ESP32-S3-based smart home automation system developed using E
 - **DataStorage Class**: Manages global storage of latest LDR, DHT22, and NTP data using local_data_t union.
 - **Display Formatting**: Uses display_item_t structure to format data (e.g., "Temp: %.2fC\n", "Date: %02d/%02d/%02d\n").
 
-## Progress
-- Set up ESP32-S3, DHT22, LDR, and ILI9341 in Wokwi. Implemented WiFi, ThingsBoard, DHT22, LDR, NTP, and Control tasks. Created DataStorage class to replace queue-based data sharing, resolving conflicts. Developed lcd_task prototype with lcdgfx for static text display.
-- Completed lcd_task to display live LDR/DHT22/NTP data every 5 seconds. Refactored display logic using display_item_t for modular formatting. Tested display in Wokwi (system stable at 54% flash, 12.0% RAM with PSRAM).
-- System operational with all core tasks (WiFi, ThingsBoard, sensors, control, display) integrated. Flash usage at 54% (950,000 bytes of 1.75 MB), RAM at 12.0% (38,000 bytes) with PSRAM.
-
 ## Planned Features
 - Enhance lcd_task with conditional display (e.g., highlight temperature if >32°C) and energy usage monitoring (calculate light-on duration).
 - Integrate ADXL345 accelerometer for motion detection, develop security alerts, and extend lcd_task for motion status display.
@@ -49,11 +44,3 @@ This project is an ESP32-S3-based smart home automation system developed using E
 - Optimize task priorities using DataStorage for data sharing.
 - Add error handling for sensor failures and MQTT issues.
 - Update GitHub README with state diagram and changelog.
-
-## Notes
-- MQTT broker: app.coreiot.io.
-- Using C++ for ArduinoJson/ThingsBoard SDK compatibility.
-- Test in Wokwi with ESP LOGs.
-- ILI9341 displays lighting status and sensor data (e.g., "Temp: 25.50C", "Date: 21/05/25").
-- LDR planned for outdoor placement.
-- DataStorage provides read-only access with JSON parsing for ThingsBoard.
