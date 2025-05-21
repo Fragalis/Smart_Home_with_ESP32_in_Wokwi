@@ -16,7 +16,7 @@ typedef union {
         uint8_t hour;
         uint8_t day;
         uint8_t month;
-        uint8_t year;
+        uint16_t year;
     } ntp_data;
 } local_data_t;
 
@@ -33,7 +33,7 @@ public:
     void set_ldr_data(const uint32_t &luminosity);
 
     void set_ntp_data(const local_data_t &data);
-    void set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint8_t &year);
+    void set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint16_t &year);
 
     local_data_t get_dht22_data();
     local_data_t get_ldr_data();

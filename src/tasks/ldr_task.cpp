@@ -20,7 +20,7 @@ void ldr_task(void *arg)
         // Store data
         data_storage.set_ldr_data(luminosity);
         
-        // ESP_LOGI(TAG, "Luminosity: %d, is_dark: %d", ldr_data.luminosity, ldr_data.is_dark);
+        ESP_LOGI(TAG, "Luminosity: %lu", luminosity);
         // char json[BUFFER_SIZE];
         // snprintf(json, BUFFER_SIZE, "{\"lumi\": %d, \"is_dark\": %d}", ldr_data.luminosity, ldr_data.is_dark);
         // send_telemetry(json);

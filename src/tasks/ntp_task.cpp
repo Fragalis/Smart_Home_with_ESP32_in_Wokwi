@@ -28,7 +28,7 @@ void ntp_task(void *arg) {
         localtime_r(&now, &timeinfo);
 
         // Store data
-        data_storage.set_ntp_data(timeinfo.tm_min, timeinfo.tm_hour, timeinfo.tm_mday, timeinfo.tm_mon, timeinfo.tm_year);
+        data_storage.set_ntp_data(timeinfo.tm_min, timeinfo.tm_hour, timeinfo.tm_mday, timeinfo.tm_mon, timeinfo.tm_year + 1970);
 
         vTaskDelay(pdMS_TO_TICKS(NTP_SYNC_TIMER));
     }

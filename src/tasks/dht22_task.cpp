@@ -2,7 +2,6 @@
 
 // Datasheet https://cdn.sparkfun.com/assets/f/7/d/9/c/DHT22.pdf
 static const char *TAG = "DHT22";
-static const int BUFFER_SIZE = 36;
 
 static float temperature = 0.0;
 static float humidity = 0.0;

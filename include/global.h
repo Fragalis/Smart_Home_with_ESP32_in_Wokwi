@@ -6,11 +6,7 @@
 #include <freertos/task.h>
 #include <freertos/queue.h>
 #include <driver/gpio.h>
-#include "driver/spi_master.h"
 #include "esp_adc/adc_oneshot.h"
-#include "esp_lcd_panel_io.h"
-#include "esp_lcd_panel_vendor.h"
-#include "esp_lcd_panel_ops.h"
 #include <esp_err.h>
 #include <esp_log.h>
 #include "esp_system.h"
@@ -36,6 +32,7 @@
 #include "../src/tasks/dht22_task.h"
 #include "../src/tasks/ldr_task.h"
 #include "../src/tasks/lcd_task.h"
+
 // Connection tasks headers
 #include "../src/tasks/ntp_task.h"
 #include "../src/tasks/wifi_task.h"
@@ -75,10 +72,14 @@
 #define NTP_SYNC_TIMER          15000u
 #define STEPPER_DELAY_TIMER     10u
 #define CONTROL_TIMER           1000u
+#define LCD_FLUSH_TIMER         10u
+#define LCD_DISPLAY_TIMER       1000u
+#define LCD_FETCH_TIMER         5000u
 
 // LCD configuration
 #define LCD_SPI_HOST            SPI1_HOST 
 #define LCD_CLOCK_SPEED_HZ      10*1000*1000u
+#define LCD_BUFFER_SIZE         100
 
 // Threshold configuration
 #define LIGHT_THRESHOLD         100     // Threshold to toggle the lamp

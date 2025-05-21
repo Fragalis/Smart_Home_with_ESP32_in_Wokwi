@@ -25,7 +25,6 @@ enum CURTAIN_STATE {
 
 void control_task(void *arg) {
     CURTAIN_STATE curtain_state = OPEN; // Initial state
-    local_data_t ldr_data, ntp_data;
     uint32_t luminosity = 1;
     uint8_t hour = 0;
     while (1) {

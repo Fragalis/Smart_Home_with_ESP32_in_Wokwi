@@ -45,7 +45,7 @@ void DataStorage::set_ntp_data(const local_data_t &data) {
     ntp_data.ntp_data.year = data.ntp_data.year;
 }
 
-void DataStorage::set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint8_t &year) {
+void DataStorage::set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint16_t &year) {
     ntp_data.ntp_data.minute = minute;
     ntp_data.ntp_data.hour = hour;
     ntp_data.ntp_data.day = day;
