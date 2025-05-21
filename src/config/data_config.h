@@ -53,9 +53,9 @@ typedef union {
 
 enum display_type { DHT22, LDR, DATE, TIME } ; // data types
 typedef struct {
-    const char* label;         // e.g., "Temp: "
-    display_value_t* (*get_value)(); // Function to fetch the value from DataStorage
-    const char* format;        // e.g., "%.2fC\n"
+    const char* label;                      // e.g., "Temp: "
+    display_value_t* (*get_value)();        // Function to fetch the value from DataStorage
+    const char* format;                     // e.g., "%.2fC\n"
     display_type type;
 } display_item_t;
 
