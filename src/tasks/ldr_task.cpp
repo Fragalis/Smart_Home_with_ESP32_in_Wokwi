@@ -20,7 +20,7 @@ void ldr_task(void *arg)
         // Store data
         data_storage.set_ldr_data(luminosity);
         
-        ESP_LOGI(TAG, "Luminosity: %lu", luminosity);
+        // ESP_LOGI(TAG, "Luminosity: %lu", luminosity);
         // char json[BUFFER_SIZE];
         // snprintf(json, BUFFER_SIZE, "{\"lumi\": %d, \"is_dark\": %d}", ldr_data.luminosity, ldr_data.is_dark);
         // send_telemetry(json);
@@ -31,7 +31,7 @@ void ldr_task(void *arg)
 void ldr_task_init(void)
 {
     // Create the DHT22 task
-    BaseType_t task_created = xTaskCreate(ldr_task, "ldr_task", 4096, NULL, 5, NULL);
+    BaseType_t task_created = xTaskCreate(ldr_task, "ldr_task", 4096, NULL, 1, NULL);
     if (task_created != pdPASS) {
         ESP_LOGE(TAG, "Failed to create ldr_task");
         return;

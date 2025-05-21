@@ -9,7 +9,7 @@ static void lcd_display_task(void *args)
 {
     while (1) {
         if (strcmp(data, "") != 0) {
-            display.printFixed(0, 0, "");
+            display.clear();
             vTaskDelay(pdMS_TO_TICKS(LCD_FLUSH_TIMER));
             display.printFixed(0, 0, data);
             strcpy(data, "");
@@ -20,19 +20,32 @@ static void lcd_display_task(void *args)
 
 static void lcd_fetch_data_task(void *args) {
     while (1) {
-        snprintf(data, 
-                 LCD_BUFFER_SIZE, 
-                "Temperature %.2fC\nHumidity %.2f%%\nLuminousity %lu\nDate: %2d/%2d/%2d\nTime: %2d:%2d\n", 
-                 data_storage.get_dht22_data().dht22_data.temperature, 
-                 data_storage.get_dht22_data().dht22_data.humidity,
-                 data_storage.get_ldr_data().ldr_data.luminosity,
-                 data_storage.get_ntp_data().ntp_data.day,
-                 data_storage.get_ntp_data().ntp_data.month,
-                 data_storage.get_ntp_data().ntp_data.year,
-                 data_storage.get_ntp_data().ntp_data.hour,
-                 data_storage.get_ntp_data().ntp_data.minute
-                );
-        // ESP_LOGI(TAG, "Data fetched: \n%s", data);
+        char temp_buffer[32];
+        for (int i = 0; i < num_items; i++) {
+            display_value_t* value = display_items[i].get_value();
+            switch (display_items[i].type) {
+                case DHT22:
+                    snprintf(temp_buffer, sizeof(temp_buffer), display_items[i].format, value->f_value);
+                    break;
+                case LDR:
+                    snprintf(temp_buffer, sizeof(temp_buffer), display_items[i].format, value->u_value);
+                    break;
+                case DATE:
+                    snprintf(temp_buffer, sizeof(temp_buffer), display_items[i].format, 
+                             value->date.day, value->date.month, value->date.year);
+                    break;
+                case TIME:
+                    snprintf(temp_buffer, sizeof(temp_buffer), display_items[i].format, 
+                             value->time.hour, value->time.minute);
+                    break;
+                default:
+                    ESP_LOGW(TAG, "label %s with format %s", display_items[i].label, display_items[i].format);
+            }
+            strncat(data, display_items[i].label, LCD_BUFFER_SIZE - strlen(data) - 1);
+            strncat(data, temp_buffer, LCD_BUFFER_SIZE - strlen(data) - 1);
+        }
+        ESP_LOGI(TAG, "Data fetched");
+        // ESP_LOGI(TAG, "%s", data);
         vTaskDelay(pdMS_TO_TICKS(LCD_FETCH_TIMER));
     }
 }
@@ -41,14 +54,14 @@ void lcd_task_init() {
     display.begin();
     display.setFixedFont(ssd1306xled_font8x16);
     
-    BaseType_t fetch_data_task_created = xTaskCreate(lcd_fetch_data_task, "lcd_fetch_data_task", 4096, NULL, 1, NULL);
+    BaseType_t fetch_data_task_created = xTaskCreate(lcd_fetch_data_task, "lcd_fetch_data_task", 4096, NULL, 2, NULL);
     if (fetch_data_task_created != pdPASS) {
         ESP_LOGE(TAG, "Failed to create lcd_fetch_data_task");
         return;
     }
     ESP_LOGI(TAG, "lcd_fetch_data_task initialized");
 
-    BaseType_t display_task_created = xTaskCreate(lcd_display_task, "lcd_display_task", 2048, NULL, 2, NULL);
+    BaseType_t display_task_created = xTaskCreate(lcd_display_task, "lcd_display_task", 2048, NULL, 3, NULL);
     if (display_task_created != pdPASS) {
         ESP_LOGE(TAG, "Failed to create lcd_display_task");
         return;

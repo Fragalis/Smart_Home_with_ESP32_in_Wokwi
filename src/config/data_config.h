@@ -40,6 +40,27 @@ public:
     local_data_t get_ntp_data();
 };
 
+typedef union {
+    float f_value;    // For temperature, humidity
+    uint32_t u_value; // For luminosity
+    struct {
+        int day, month, year; // For date
+    } date;
+    struct {
+        int hour, minute; // For time
+    } time;
+} display_value_t;
+
+enum display_type { DHT22, LDR, DATE, TIME } ; // data types
+typedef struct {
+    const char* label;         // e.g., "Temp: "
+    display_value_t* (*get_value)(); // Function to fetch the value from DataStorage
+    const char* format;        // e.g., "%.2fC\n"
+    display_type type;
+} display_item_t;
+
+extern display_item_t display_items[];
 extern DataStorage data_storage;
+extern const int num_items;
 
 #endif // DATA_AGGREGATION_CONFIG_H_
