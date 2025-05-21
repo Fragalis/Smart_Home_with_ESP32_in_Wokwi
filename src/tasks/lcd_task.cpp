@@ -22,7 +22,7 @@ static void lcd_fetch_data_task(void *args) {
     while (1) {
         snprintf(data, 
                  LCD_BUFFER_SIZE, 
-                "Temperature %.2fC\nHumidity %.2f%%\nLuminousity %lu\nDate: %2d/%2d/%2d\nTime: %2d/%2d\n", 
+                "Temperature %.2fC\nHumidity %.2f%%\nLuminousity %lu\nDate: %2d/%2d/%2d\nTime: %2d:%2d\n", 
                  data_storage.get_dht22_data().dht22_data.temperature, 
                  data_storage.get_dht22_data().dht22_data.humidity,
                  data_storage.get_ldr_data().ldr_data.luminosity,
@@ -32,7 +32,7 @@ static void lcd_fetch_data_task(void *args) {
                  data_storage.get_ntp_data().ntp_data.hour,
                  data_storage.get_ntp_data().ntp_data.minute
                 );
-        ESP_LOGI(TAG, "Data fetched: \n%s", data);
+        // ESP_LOGI(TAG, "Data fetched: \n%s", data);
         vTaskDelay(pdMS_TO_TICKS(LCD_FETCH_TIMER));
     }
 }
