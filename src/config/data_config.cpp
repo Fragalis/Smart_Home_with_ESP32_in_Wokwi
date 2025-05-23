@@ -1,66 +1,116 @@
 #include "data_config.h"
 
 DataStorage::DataStorage() {
-    dht22_data.dht22_data = {
+    dht22_data = {
         .temperature = 0,
         .humidity = 0,
     };
 
-    ldr_data.ldr_data = {
+    ldr_data = {
         .luminosity = 0,
     };
 
-    ntp_data.ntp_data = {
+    ntp_data = {
         .minute = 0,
         .hour = 0,
         .day = 0,
         .month = 0,
         .year = 0,
     };
+
+    data_semaphore = xSemaphoreCreateMutex();
+    if (data_semaphore == NULL) {
+        ESP_LOGE(TAG, "Failed to create semaphore");
+    }
 }
 
-void DataStorage::set_dht22_data(const local_data_t &data) {
-    dht22_data.dht22_data.humidity = data.dht22_data.humidity;
-    dht22_data.dht22_data.temperature = data.dht22_data.temperature;
+DataStorage::~DataStorage() {
+    if (data_semaphore != NULL) {
+        vSemaphoreDelete(data_semaphore);
+    }
+}
+
+void DataStorage::set_dht22_data(const dht22_data_t &data) {
+    set_dht22_data(data.temperature, data.humidity);
 }
 
 void DataStorage::set_dht22_data(const float &temperature, const float &humidity) {
-    dht22_data.dht22_data.humidity = humidity;
-    dht22_data.dht22_data.temperature = temperature;
+    if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
+        dht22_data.humidity = humidity;
+        dht22_data.temperature = temperature;
+        xSemaphoreGive(data_semaphore);
+    }
+    else {
+        ESP_LOGE(TAG, "Failed to set DHT22 data");
+    }
 }
 
-void DataStorage::set_ldr_data(const local_data_t &data) {
-    ldr_data.ldr_data.luminosity = data.ldr_data.luminosity;
+void DataStorage::set_ldr_data(const ldr_data_t &data) {
+    set_ldr_data(data.luminosity);
 }
 
 void DataStorage::set_ldr_data(const uint32_t &luminosity) {
-    ldr_data.ldr_data.luminosity = luminosity;
+    if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
+        ldr_data.luminosity = luminosity;
+        xSemaphoreGive(data_semaphore);
+    }
+    else {
+        ESP_LOGE(TAG, "Failed to set LDR data");
+    }
 }
 
-void DataStorage::set_ntp_data(const local_data_t &data) {
-    ntp_data.ntp_data.minute = data.ntp_data.minute;
-    ntp_data.ntp_data.hour = data.ntp_data.hour;
-    ntp_data.ntp_data.day = data.ntp_data.day;
-    ntp_data.ntp_data.month = data.ntp_data.month;
-    ntp_data.ntp_data.year = data.ntp_data.year;
+void DataStorage::set_ntp_data(const ntp_data_t &data) {
+    set_ntp_data(data.minute, data.hour, data.day, data.month, data.year);
 }
 
 void DataStorage::set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint16_t &year) {
-    ntp_data.ntp_data.minute = minute;
-    ntp_data.ntp_data.hour = hour;
-    ntp_data.ntp_data.day = day;
-    ntp_data.ntp_data.month = month;
-    ntp_data.ntp_data.year = year;
+    if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
+        ntp_data.minute = minute;
+        ntp_data.hour = hour;
+        ntp_data.day = day;
+        ntp_data.month = month;
+        ntp_data.year = year;
+        xSemaphoreGive(data_semaphore);
+    }
+    else {
+        ESP_LOGE(TAG, "Failed to set NTP data");
+    }
 }
 
-local_data_t DataStorage::get_dht22_data() {
-    return dht22_data;
+dht22_data_t DataStorage::get_dht22_data() {
+    dht22_data_t data = {0, 0};
+    if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
+        data = dht22_data;
+        xSemaphoreGive(data_semaphore);
+    }
+    else {
+        ESP_LOGE(TAG, "Failed to get DHT22 data");
+    }
+    return data;
 }
-local_data_t DataStorage::get_ldr_data() {
-    return ldr_data;
+
+ldr_data_t DataStorage::get_ldr_data() {
+    ldr_data_t data = {0};
+    if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
+        data = ldr_data;
+        xSemaphoreGive(data_semaphore);
+    }
+    else {
+        ESP_LOGE(TAG, "Failed to get LDR data");
+    }
+    return data;
 }
-local_data_t DataStorage::get_ntp_data() {
-    return ntp_data;
+
+ntp_data_t DataStorage::get_ntp_data() {
+    ntp_data_t data = {0, 0, 0, 0, 0};
+    if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
+        data = ntp_data;
+        xSemaphoreGive(data_semaphore);
+    }
+    else {
+        ESP_LOGE(TAG, "Failed to get NTP data");
+    }
+    return data;
 }
 
 DataStorage data_storage;
@@ -69,30 +119,30 @@ DataStorage data_storage;
 static display_value_t temp_value, humid_value, lum_value, date_value, time_value;
 
 static display_value_t* get_temp() {
-    temp_value.f_value = data_storage.get_dht22_data().dht22_data.temperature;
+    temp_value.f_value = data_storage.get_dht22_data().temperature;
     return &temp_value;
 }
 
 static display_value_t* get_humidity() {
-    humid_value.f_value = data_storage.get_dht22_data().dht22_data.humidity;
+    humid_value.f_value = data_storage.get_dht22_data().humidity;
     return &humid_value;
 }
 
 static display_value_t* get_luminosity() {
-    lum_value.u_value = data_storage.get_ldr_data().ldr_data.luminosity;
+    lum_value.u_value = data_storage.get_ldr_data().luminosity;
     return &lum_value;
 }
 
 static display_value_t* get_date() {
-    date_value.date.day = data_storage.get_ntp_data().ntp_data.day;
-    date_value.date.month = data_storage.get_ntp_data().ntp_data.month;
-    date_value.date.year = data_storage.get_ntp_data().ntp_data.year;
+    date_value.date.day = data_storage.get_ntp_data().day;
+    date_value.date.month = data_storage.get_ntp_data().month;
+    date_value.date.year = data_storage.get_ntp_data().year;
     return &date_value;
 }
 
 static display_value_t* get_time() {
-    time_value.time.hour = data_storage.get_ntp_data().ntp_data.hour;
-    time_value.time.minute = data_storage.get_ntp_data().ntp_data.minute;
+    time_value.time.hour = data_storage.get_ntp_data().hour;
+    time_value.time.minute = data_storage.get_ntp_data().minute;
     return &time_value;
 }
 

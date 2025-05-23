@@ -53,7 +53,8 @@ static void lcd_fetch_data_task(void *args) {
 void lcd_task_init() {
     display.begin();
     display.setFixedFont(ssd1306xled_font8x16);
-    
+    gpio_set_level(LCD_LED_PIN, 1);
+
     BaseType_t fetch_data_task_created = xTaskCreate(lcd_fetch_data_task, "lcd_fetch_data_task", 4096, NULL, 2, NULL);
     if (fetch_data_task_created != pdPASS) {
         ESP_LOGE(TAG, "Failed to create lcd_fetch_data_task");

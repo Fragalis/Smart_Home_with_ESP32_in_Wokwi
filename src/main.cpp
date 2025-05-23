@@ -1,4 +1,5 @@
 #include <global.h>
+#include "driver/ledc.h"
 
 extern "C" {
     void app_main(void) {
@@ -6,7 +7,6 @@ extern "C" {
         hardware_config_init();
 
         // Setup device tasks
-        blink_led_task_init();
         dht22_task_init();
         ldr_task_init();
         control_task_init();

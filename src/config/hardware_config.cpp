@@ -40,9 +40,9 @@ static void init_gpio_pins(void)
 {
     // Initialize GPIO configuration
     gpio_config_t io_conf = {
-        .pin_bit_mask = (1ULL << LED_PIN)
-                      | (1ULL << STEPPER_DIRECTION_PIN)
+        .pin_bit_mask = (1ULL << STEPPER_DIRECTION_PIN)
                       | (1ULL << STEPPER_STEP_PIN)
+                      | (1ULL << LCD_LED_PIN)
                       | (1ULL << LIGHT_PIN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_ENABLE,

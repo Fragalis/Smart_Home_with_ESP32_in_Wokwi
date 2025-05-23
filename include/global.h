@@ -1,6 +1,9 @@
 #ifndef GLOBAL_H_
 #define GLOBAL_H_
 
+#define BOARD_NAME "ESP32_SMART_HOUSE_IN_WOKWI"
+#define VERSION "1.2.1"
+
 // Global libraries
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -28,7 +31,6 @@
 
 // Device tasks headers
 #include "../src/tasks/control_task.h"
-#include "../src/tasks/blink_led_task.h"
 #include "../src/tasks/dht22_task.h"
 #include "../src/tasks/ldr_task.h"
 #include "../src/tasks/lcd_task.h"
@@ -39,8 +41,7 @@
 #include "../src/tasks/thingsboard_task.h"
 
 // GPIO configuration
-// LED and light pins
-#define LED_PIN                 GPIO_NUM_19
+// Smart house output pins
 #define LIGHT_PIN               GPIO_NUM_20
 // DHT22 pin
 #define DHT_PIN                 GPIO_NUM_47
@@ -60,6 +61,7 @@
 #define LCD_RST_PIN             GPIO_NUM_16
 
 // Timer configuration
+#define DATA_SEMAPHORE_TIMER    100u
 #define BLINK_LED_TIMER         1000u
 #define DHT22_SEND_TIMER        2000u
 #define DHT22_READ_TIMER        2000u

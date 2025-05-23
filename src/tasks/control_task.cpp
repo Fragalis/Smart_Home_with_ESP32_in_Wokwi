@@ -29,8 +29,8 @@ void control_task(void *arg) {
     uint8_t hour = 0;
     while (1) {
         // Get data
-        luminosity = data_storage.get_ldr_data().ldr_data.luminosity;
-        hour = data_storage.get_ntp_data().ntp_data.hour;
+        luminosity = data_storage.get_ldr_data().luminosity;
+        hour = data_storage.get_ntp_data().hour;
         switch (curtain_state) {
             case OPEN:
                 // Close the curtain if it's dark or after 5 PM

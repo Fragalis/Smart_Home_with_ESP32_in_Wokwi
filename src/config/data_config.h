@@ -3,41 +3,48 @@
 
 #include <global.h>
 
-typedef union {
-    struct {
-        float temperature;
-        float humidity;
-    } dht22_data;
-    struct {
-        uint32_t luminosity;
-    } ldr_data;
-    struct {
-        uint8_t minute;
-        uint8_t hour;
-        uint8_t day;
-        uint8_t month;
-        uint16_t year;
-    } ntp_data;
-} local_data_t;
+typedef struct {
+    float temperature;
+    float humidity;
+} dht22_data_t;
+
+typedef struct {
+    uint32_t luminosity;
+} ldr_data_t;
+
+typedef struct {
+    uint8_t minute;
+    uint8_t hour;
+    uint8_t day;
+    uint8_t month;
+    uint16_t year;
+} ntp_data_t;
 
 class DataStorage {
 private:
-    local_data_t dht22_data, ldr_data, ntp_data;
+    const char *TAG = "DATA";
+
+    dht22_data_t dht22_data;
+    ldr_data_t ldr_data;
+    ntp_data_t ntp_data;
+
+    SemaphoreHandle_t data_semaphore;
 public:
     DataStorage();
+    ~DataStorage();
 
-    void set_dht22_data(const local_data_t &data);
+    void set_dht22_data(const dht22_data_t &data);
     void set_dht22_data(const float &temperature, const float &humidity);
 
-    void set_ldr_data(const local_data_t &data);
+    void set_ldr_data(const ldr_data_t &data);
     void set_ldr_data(const uint32_t &luminosity);
 
-    void set_ntp_data(const local_data_t &data);
+    void set_ntp_data(const ntp_data_t &data);
     void set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint16_t &year);
 
-    local_data_t get_dht22_data();
-    local_data_t get_ldr_data();
-    local_data_t get_ntp_data();
+    dht22_data_t get_dht22_data();
+    ldr_data_t get_ldr_data();
+    ntp_data_t get_ntp_data();
 };
 
 typedef union {
