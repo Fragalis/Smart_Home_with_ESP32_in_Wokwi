@@ -50,9 +50,16 @@ void control_door(int state) {
 }
 
 void control_task(void *arg) {
+    int door_timer = 0;
+    bool last_door_state = 0;
     while (1) {
         control_light(light_state);
-        control_door(door_state);
+        if (door_timer >= DOOR_TIMEOUT && door_state != last_door_state) {
+            control_door(door_state);
+            door_timer = 0;
+            last_door_state = door_state;
+        }
+        door_timer = (door_timer >= DOOR_TIMEOUT)? DOOR_TIMEOUT : door_timer + 1;
         vTaskDelay(pdMS_TO_TICKS(CONTROL_TIMER)); // Adjust delay as needed
     }
 }

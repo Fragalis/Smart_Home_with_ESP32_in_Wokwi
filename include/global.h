@@ -2,7 +2,7 @@
 #define GLOBAL_H_
 
 #define BOARD_NAME "ESP32_SMART_HOUSE_IN_WOKWI"
-#define VERSION "1.2.1"
+#define VERSION "1.1.0"
 
 // Global libraries
 #include <freertos/FreeRTOS.h>
