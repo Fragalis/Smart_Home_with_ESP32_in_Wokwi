@@ -20,6 +20,10 @@ typedef struct {
     uint16_t year;
 } ntp_data_t;
 
+typedef struct {
+    uint16_t distance;
+} hc_sr04_data_t;
+
 class DataStorage {
 private:
     const char *TAG = "DATA";
@@ -27,6 +31,7 @@ private:
     dht22_data_t dht22_data;
     ldr_data_t ldr_data;
     ntp_data_t ntp_data;
+    hc_sr04_data_t hc_sr04_data;
 
     SemaphoreHandle_t data_semaphore;
 public:
@@ -41,10 +46,14 @@ public:
 
     void set_ntp_data(const ntp_data_t &data);
     void set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint16_t &year);
+    
+    void set_hc_sr04_data(const hc_sr04_data_t &data);
+    void set_hc_sr04_data(const uint16_t &distance);
 
     dht22_data_t get_dht22_data();
     ldr_data_t get_ldr_data();
     ntp_data_t get_ntp_data();
+    hc_sr04_data_t get_hc_sr04_data();
 };
 
 typedef union {

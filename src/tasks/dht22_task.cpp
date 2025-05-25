@@ -6,19 +6,6 @@ static const char *TAG = "DHT22";
 static float temperature = 0.0;
 static float humidity = 0.0;
 
-static bool await_signal(uint8_t uInterval, int signal) 
-{
-    uint8_t uSeconds = 0;
-    while (gpio_get_level(DHT_PIN) != signal) {
-        if (uSeconds > uInterval) {
-            return false;
-        }
-        uSeconds++;
-        esp_rom_delay_us(1);
-    }
-    return true;
-}
-
 // Send a signal to the DHT22 sensor and await response
 static esp_err_t send_signal() 
 {
@@ -36,14 +23,14 @@ static esp_err_t send_signal()
 
     // Sensor sends a low signal for 80us
     // Await the next high signal from sensor
-    if (!await_signal(100, 1)) {
+    if (await_signal(DHT_PIN, 100, 1) == 0) {
         ESP_LOGE(TAG, "Unable to receive data from sensor");
         return ESP_FAIL;
     }
 
     // Sensor sends a higher signal for 80us
     // Await the next low signal from sensor
-    if (!await_signal(100, 0)) {
+    if (await_signal(DHT_PIN, 100, 0) == 0) {
         ESP_LOGE(TAG, "Request timeout");
         return ESP_FAIL;
     }
@@ -59,7 +46,7 @@ static esp_err_t read_data(float *temp, float *hum)
     for (uint8_t i = 0; i < 40; ++i) {
         // Sensor send 1 bit of low signal for 50us
         // Await the next high signal from sensor
-        if (!await_signal(100, 1)) {
+        if (await_signal(DHT_PIN, 100, 1) == 0) {
             ESP_LOGE(TAG, "Request timeout");
             return ESP_FAIL;
         }
@@ -68,7 +55,7 @@ static esp_err_t read_data(float *temp, float *hum)
         if (gpio_get_level(DHT_PIN) > 0) data[i/8] |= 1; // Set the last bit to 1 if sensor signal is high
 
         // Await the next low signal from sensor
-        if (!await_signal(100, 0)) {
+        if (await_signal(DHT_PIN, 100, 0) == 0) {
             ESP_LOGE(TAG, "Request timeout");
             return ESP_FAIL;
         }
@@ -94,14 +81,14 @@ void dht22_task(void *arg)
         esp_err_t err = send_signal();
         if (err != ESP_OK) {
             ESP_LOGE(TAG, "Failed to send signal");
-            vTaskDelay(pdMS_TO_TICKS(DHT22_SEND_TIMER));
+            vTaskDelay(pdMS_TO_TICKS(DHT22_DELAY_TIMER));
             continue;
         }
         // Read data from the DHT22 sensor
         err = read_data(&temperature, &humidity);
         if (err != ESP_OK) {
             ESP_LOGE(TAG, "Failed to read data");
-            vTaskDelay(pdMS_TO_TICKS(DHT22_READ_TIMER));
+            vTaskDelay(pdMS_TO_TICKS(DHT22_DELAY_TIMER));
             continue;
         }
         // // Log the temperature and humidity
@@ -121,7 +108,7 @@ void dht22_task(void *arg)
 
 void dht22_task_init() {
     // Create the DHT22 task
-    BaseType_t task_created = xTaskCreate(dht22_task, "dht22_task", 4096, NULL, 1, NULL);
+    BaseType_t task_created = xTaskCreate(dht22_task, "dht22_task", 2048, NULL, 1, NULL);
     if (task_created != pdPASS) {
         ESP_LOGE(TAG, "Failed to create dht22_task");
         return;

@@ -30,8 +30,8 @@ void ldr_task(void *arg)
 
 void ldr_task_init(void)
 {
-    // Create the DHT22 task
-    BaseType_t task_created = xTaskCreate(ldr_task, "ldr_task", 4096, NULL, 1, NULL);
+    // Create the LDR task
+    BaseType_t task_created = xTaskCreate(ldr_task, "ldr_task", 2048, NULL, 1, NULL);
     if (task_created != pdPASS) {
         ESP_LOGE(TAG, "Failed to create ldr_task");
         return;

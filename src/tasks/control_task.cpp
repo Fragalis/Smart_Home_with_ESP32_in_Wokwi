@@ -4,14 +4,21 @@ static const char *TAG = "CONTROL";
 
 volatile bool light_state = false;
 
+bool is_sleep_time() {
+    if (data_storage.get_ntp_data().hour < WAKE_TIME_THRESHOLD) return 1;
+    if (data_storage.get_ntp_data().hour > SLEEP_TIME_THRESHOLD) return 1;
+    return 0;
+}
+
 bool is_dark() {
-    if (data_storage.get_ldr_data().luminosity < LIGHT_THRESHOLD) return 1;
+    if (data_storage.get_ldr_data().luminosity < LUMI_THRESHOLD) return 1;
     return 0;
 }
 
 void check_state_task(void *args) {
     while (1) {
-        light_state = is_dark();
+        // If it's not sleep time (11PM - 7AM) and it's dark, turn on light
+        light_state = !is_sleep_time() && is_dark();
         vTaskDelay(pdMS_TO_TICKS(CHECK_STATE_TIMER));
     }
 }

@@ -38,6 +38,7 @@
         "compare": "cpp",
         "cstdint": "cpp",
         "cstdlib": "cpp",
-        "ntp_task.h": "c"
+        "ntp_task.h": "c",
+        "gpio pins": "c"
     }
 }

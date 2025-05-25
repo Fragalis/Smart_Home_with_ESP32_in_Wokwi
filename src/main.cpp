@@ -11,7 +11,8 @@ extern "C" {
         ldr_task_init();
         control_task_init();
         lcd_task_init();
-        
+        hc_sr04_task_init();
+
         // Setup connection tasks
         wifi_task_init();
         thingsboard_task_init();

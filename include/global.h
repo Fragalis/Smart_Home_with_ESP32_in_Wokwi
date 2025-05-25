@@ -34,11 +34,15 @@
 #include "../src/tasks/dht22_task.h"
 #include "../src/tasks/ldr_task.h"
 #include "../src/tasks/lcd_task.h"
+#include "../src/tasks/hc_sr04_task.h"
 
 // Connection tasks headers
 #include "../src/tasks/ntp_task.h"
 #include "../src/tasks/wifi_task.h"
 #include "../src/tasks/thingsboard_task.h"
+
+// Utils headers
+#include "../src/utils/utils.h"
 
 // GPIO configuration
 // Smart house output pins
@@ -46,7 +50,7 @@
 // DHT22 pin
 #define DHT_PIN                 GPIO_NUM_47
 // LDR pins
-#define LDR_DO_PIN              GPIO_NUM_21
+#define LDR_DO_PIN              GPIO_NUM_21     // Not used
 #define LDR_AO_PIN              GPIO_NUM_10
 // Stepper motor pins
 #define STEPPER_DIRECTION_PIN   GPIO_NUM_21
@@ -59,12 +63,13 @@
 #define LCD_LED_PIN             GPIO_NUM_17
 #define LCD_MISO_PIN            GPIO_NUM_14
 #define LCD_RST_PIN             GPIO_NUM_16
+// HC-SR04 pins
+#define HC_SR04_TRIG_PIN        GPIO_NUM_41
+#define HC_SR04_ECHO_PIN        GPIO_NUM_42
 
 // Timer configuration
 #define DATA_SEMAPHORE_TIMER    100u
 #define BLINK_LED_TIMER         1000u
-#define DHT22_SEND_TIMER        2000u
-#define DHT22_READ_TIMER        2000u
 #define DHT22_DELAY_TIMER       5000u
 #define LDR_TIMER               5000u
 #define WIFI_DELAY_TIMER        1000u
@@ -78,14 +83,16 @@
 #define LCD_FLUSH_TIMER         10u
 #define LCD_DISPLAY_TIMER       1000u
 #define LCD_FETCH_TIMER         5000u
+#define HC_SR04_DELAY_TIMER     5000u
 
 // LCD configuration
 #define LCD_SPI_HOST            SPI1_HOST 
 #define LCD_CLOCK_SPEED_HZ      10*1000*1000u
-#define LCD_BUFFER_SIZE         100
+#define LCD_BUFFER_SIZE         100u
 
 // Threshold configuration
-#define LIGHT_THRESHOLD         100     // Threshold to toggle the lamp
-#define MAX_STEPS               500     // Maximum steps for the stepper motor
+#define LUMI_THRESHOLD          100u     // Threshold to toggle the lamp
+#define SLEEP_TIME_THRESHOLD    23u
+#define WAKE_TIME_THRESHOLD     7u
 
 #endif // GLOBAL_H_
