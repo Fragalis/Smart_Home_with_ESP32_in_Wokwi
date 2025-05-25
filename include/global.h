@@ -83,7 +83,7 @@
 #define LCD_FLUSH_TIMER         10u
 #define LCD_DISPLAY_TIMER       1000u
 #define LCD_FETCH_TIMER         5000u
-#define HC_SR04_DELAY_TIMER     2500u
+#define HC_SR04_DELAY_TIMER     5000u
 
 // LCD configuration
 #define LCD_SPI_HOST            SPI1_HOST 
