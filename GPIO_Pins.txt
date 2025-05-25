@@ -1,0 +1,14 @@
+GPIO_NUM_9      LCD_SCK_PIN                 SPI1
+GPIO_NUM_10     LDR_AO_PIN                  ADC
+GPIO_NUM_11     STEPPER_STEP_PIN            GPIO
+GPIO_NUM_12     LCD_DC_PIN                  SPI1
+GPIO_NUM_13     LCD_MOSI_PIN                SPI1
+GPIO_NUM_14     LCD_MISO_PIN                SPI1
+GPIO_NUM_15     LCD_CS_PIN                  SPI1
+GPIO_NUM_16     LCD_RST_PIN                 SPI1
+GPIO_NUM_17     LCD_LED_PIN                 GPIO
+GPIO_NUM_20     LIGHT_PIN                   GPIO
+GPIO_NUM_21     STEPPER_DIRECTION_PIN       GPIO
+GPIO_NUM_41     HC_SR04_TRIG_PIN            GPIO
+GPIO_NUM_42     HC_SR04_ECHO_PIN            GPIO
+GPIO_NUM_47     DHT_PIN                     GPIO

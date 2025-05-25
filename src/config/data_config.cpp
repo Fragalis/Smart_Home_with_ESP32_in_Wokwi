@@ -77,6 +77,20 @@ void DataStorage::set_ntp_data(const uint8_t &minute, const uint8_t &hour, const
     }
 }
 
+void DataStorage::set_hc_sr04_data(const hc_sr04_data_t &data) {
+    set_hc_sr04_data(data.distance);
+}
+
+void DataStorage::set_hc_sr04_data(const uint16_t &distance) {
+    if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
+        hc_sr04_data.distance = distance;
+        xSemaphoreGive(data_semaphore);
+    }
+    else {
+        ESP_LOGE(TAG, "Failed to set LDR data");
+    }
+}
+
 dht22_data_t DataStorage::get_dht22_data() {
     dht22_data_t data = {0, 0};
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
@@ -105,6 +119,18 @@ ntp_data_t DataStorage::get_ntp_data() {
     ntp_data_t data = {0, 0, 0, 0, 0};
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
         data = ntp_data;
+        xSemaphoreGive(data_semaphore);
+    }
+    else {
+        ESP_LOGE(TAG, "Failed to get NTP data");
+    }
+    return data;
+}
+
+hc_sr04_data_t DataStorage::get_hc_sr04_data() {
+    hc_sr04_data_t data = {0};
+    if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
+        data = hc_sr04_data;
         xSemaphoreGive(data_semaphore);
     }
     else {

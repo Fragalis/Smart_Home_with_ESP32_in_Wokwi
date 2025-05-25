@@ -38,20 +38,29 @@ static void init_nvs_flash(void)
 
 static void init_gpio_pins(void) 
 {
-    // Initialize GPIO configuration
-    gpio_config_t io_conf = {
+    // Initialize GPIO output configuration
+    gpio_config_t io_out_conf = {
         .pin_bit_mask = (1ULL << STEPPER_DIRECTION_PIN)
                       | (1ULL << STEPPER_STEP_PIN)
                       | (1ULL << LCD_LED_PIN)
-                      | (1ULL << LIGHT_PIN),
+                      | (1ULL << LIGHT_PIN)
+                      | (1ULL << HC_SR04_TRIG_PIN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_ENABLE,
         .pull_down_en = GPIO_PULLDOWN_DISABLE,
         .intr_type = GPIO_INTR_DISABLE
     };
+    ESP_ERROR_CHECK(gpio_config(&io_out_conf));
 
-    // Configure GPIO pins
-    ESP_ERROR_CHECK(gpio_config(&io_conf));
+    // Initialize GPIO input configuration
+    gpio_config_t io_in_conf = {
+        .pin_bit_mask = (1ULL << HC_SR04_ECHO_PIN),
+        .mode = GPIO_MODE_INPUT,
+        .pull_up_en = GPIO_PULLUP_DISABLE,
+        .pull_down_en = GPIO_PULLDOWN_DISABLE,
+        .intr_type = GPIO_INTR_DISABLE
+    };
+    ESP_ERROR_CHECK(gpio_config(&io_in_conf));
 }
 
 void hardware_config_init(void)
