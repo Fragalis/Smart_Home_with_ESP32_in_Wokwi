@@ -4,7 +4,6 @@ static const char *TAG = "CONTROL";
 
 volatile bool light_state = false;
 volatile bool door_state = false;
-static int timeout_count = 0;
 
 bool is_person_at_door() {
     if (data_storage.get_hc_sr04_data().distance < DISTANCE_THRESHOLD) return 1;
@@ -51,15 +50,9 @@ void control_door(int state) {
 }
 
 void control_task(void *arg) {
-    bool last_door_state = false;
     while (1) {
         control_light(light_state);
-        if (timeout_count >= DOOR_TIMEOUT && door_state != last_door_state) {
-            control_door(door_state);
-            timeout_count = 0;
-            last_door_state = door_state;
-        }
-        timeout_count = (timeout_count >= DOOR_TIMEOUT)? DOOR_TIMEOUT : timeout_count + 1;
+        control_door(door_state);
         vTaskDelay(pdMS_TO_TICKS(CONTROL_TIMER)); // Adjust delay as needed
     }
 }
