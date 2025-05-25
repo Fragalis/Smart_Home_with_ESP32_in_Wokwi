@@ -1,26 +1,26 @@
 # IoT-Enabled Smart Home Automation System
 
 ## Overview
-This project is an ESP32-S3-based smart home automation system developed using ESP-IDF in C++ and simulated on Wokwi. It collects environmental data (temperature, humidity, luminosity) and controls devices (curtains, lights) based on schedules and conditions, sending telemetry to app.coreiot.io via MQTT using the ThingsBoard SDK. The system leverages FreeRTOS for multitasking, ensuring robust WiFi connectivity, time synchronization, device control, and data display on an ILI9341 TFT LCD. Designed for real-world smart home applications, it demonstrates skills in embedded systems, IoT communication, RTOS, and protocol handling, targeting fresher-level Embedded Software Engineer roles.
+This project is an ESP32-S3-based smart home automation system developed using ESP-IDF in C++ and simulated on Wokwi. It collects environmental data (temperature, humidity, luminosity) and controls devices (lights, doors) based on schedules, conditions, and events, sending telemetry to app.coreiot.io via MQTT using the ThingsBoard SDK. The system leverages FreeRTOS for multitasking, ensuring robust WiFi connectivity, time synchronization, device control, and data management with a thread-safe `DataStorage` class. Designed for real-world smart home applications, it demonstrates skills in embedded systems, IoT communication, RTOS, and protocol handling, targeting fresher-level Embedded Software Engineer roles.
 
 ## Features
-- Reads temperature and humidity from a DHT22 sensor (GPIO 47) every 5 seconds.
-- Detects luminosity using an LDR (GPIO 10 AO, 21 DO) every 5 seconds, optimized with a state machine.
-- Synchronizes time with NTP every 15 seconds for scheduling (NTP timer: 15000ms).
-- Controls curtains (stepper motor on GPIO 11 step, 21 direction) and lights (GPIO 20) based on time (7 AM-5 PM) and luminosity (light on if below threshold 100).
-- Connects to a WiFi network ("Wokwi-GUEST") with event-driven reconnection (WiFi timer: 1000ms).
-- Publishes sensor data as JSON to ThingsBoard server (port 1883) using MQTT (ThingsBoard timer: 1000ms loop, 100ms delay).
-- Uses FreeRTOS tasks: WiFi, ThingsBoard, DHT22, LDR, NTP, control, and lcd_task.
-- Displays data on ILI9341 TFT LCD (SPI: GPIO 13 MOSI, 9 SCK, 15 CS, 2 DC, 16 RESET) using lcdgfx library with ssd1306xled_font8x16.
-- Implements a DataStorage class for global, read-only access to sensor and NTP data, with modular display formatting via display_item_t.
+- Reads temperature and humidity from a DHT22 sensor every 5 seconds.
+- Detects luminosity using an LDR every 5 seconds.
+- Synchronizes time with NTP every 15 seconds for scheduling.
+- Controls lights (GPIO 20) based on darkness (LDR) and sleep time (NTP, 7 AM - 11 PM).
+- Controls doors with a stepper motor (GPIO 11 step, 21 direction) triggered by an HC-SR04 ultrasound sensor detecting persons (<50 cm).
+- Connects to a WiFi network ("Wokwi-GUEST") with event-driven reconnection.
+- Publishes sensor data as JSON to ThingsBoard server (port 1883) using MQTT.
+- Uses FreeRTOS tasks: WiFi, ThingsBoard, DHT22, LDR, NTP, control, hc_sr04, lcd_task and planned pir task.
+- Implements a thread-safe `DataStorage` class for global access to sensor and NTP data, using a semaphore for concurrency.
 
 ## Hardware
 - ESP32-S3-DevKitM-1: Core microcontroller (4 MB flash, 512 KB RAM).
-- DHT22 Sensor: GPIO 47 for temperature and humidity (read timer: 2000ms, delay: 5000ms).
-- LDR: GPIO 10 (AO), 21 (DO) for luminosity (timer: 5000ms), planned outdoors.
-- Stepper Motor: GPIO 11 (step), 21 (direction) for curtains (delay timer: 10ms, max steps: 500).
+- DHT22 Sensor: GPIO 47 for temperature and humidity (timer: 2500ms).
+- LDR: GPIO 10 (AO) for luminosity (timer: 5000ms), planned outdoors.
+- Stepper Motor: GPIO 11 (step), 21 (direction) for door control (delay timer: 10ms, max steps: 50).
 - Light: GPIO 20 for ambient control.
-- ILI9341 TFT LCD: SPI (GPIO 13 MOSI, 9 SCK, 15 CS, 2 DC, 16 RESET, 17 LED, 14 MISO; SPI host: SPI1_HOST, clock: 10MHz).
+- HC-SR04 Ultrasound Sensor: GPIO 41 (TRIG), 42 ECHO for person detection and obstacle sensing (timer: 500ms on motion, 5000ms otherwise).
 
 ## Software Architecture
 - **WiFi Task**: Connects to "Wokwi-GUEST" and manages reconnection.
@@ -28,19 +28,20 @@ This project is an ESP32-S3-based smart home automation system developed using E
 - **DHT22 Task**: Reads and queues temperature/humidity data.
 - **LDR Task**: Reads and queues luminosity data.
 - **NTP Task**: Fetches and queues time data.
-- **Control Task**: Manages curtains and lights based on time and luminosity.
-- **lcd_task**: Displays sensor data on ILI9341 using lcdgfx library (fetch timer: 5000ms, display timer: 1000ms, flush timer: 10ms).
-- **DataStorage Class**: Manages global storage of latest LDR, DHT22, and NTP data using local_data_t union.
-- **Display Formatting**: Uses display_item_t structure to format data (e.g., "Temp: %.2fC\n", "Date: %02d/%02d/%02d\n").
+- **Control Task**: Manages lights and doors using a Polling Architecture with `check_state_task` (polling conditions.
+- **hc_sr04_task**: Measures distance and posts events to the queue, with PIR-triggered responsiveness.
+- **DataStorage Class**: Manages global storage of latest LDR, DHT22, HC-SR04, and NTP data with internal semaphore.
 
 ## Planned Features
-- Enhance lcd_task with conditional display (e.g., highlight temperature if >32°C) and energy usage monitoring (calculate light-on duration).
-- Integrate ADXL345 accelerometer for motion detection, develop security alerts, and extend lcd_task for motion status display.
-- Add SD card for logging and optimize memory usage (target <48% flash, <15% RAM).
-- Implement temperature-based fan control, add button-based manual overrides, and enhance lcd_task with dynamic status messages.
-- Integrate all features, create Wokwi demo video, and update documentation.
+- Enhance control logic with PIR-based power saving (e.g., turn off lights after 5 minutes of no motion).
+- Integrate ILI9341 TFT LCD (SPI: GPIO 13 MOSI, 9 SCK, 15 CS, 2 DC, 16 RESET) for data display, with conditional formatting (e.g., highlight temperature >32°C).
+- Add SD card for logging sensor data and optimize memory usage (target <48% flash, <15% RAM).
+- Implement temperature-based fan control (GPIO TBD) and button-based manual overrides (GPIO TBD).
+- Expand security features with door/window sensors (Week 2) and state machine for door states (Week 4).
+- Integrate vibration, air quality, smoke, water, and health sensors (Weeks 3-5) with event-driven rules.
 
 ## Future Improvements
-- Optimize task priorities using DataStorage for data sharing.
-- Add error handling for sensor failures and MQTT issues.
-- Update GitHub README with state diagram and changelog.
+- Optimize task priorities using `DataStorage` for efficient data sharing.
+- Add robust error handling for sensor failures, MQTT issues, and stepper motor faults.
+- Update GitHub README with state diagram, changelog, and detailed Hybrid Rule-Based Architecture description.
+- Create a Wokwi demo video showcasing door control, light automation, and security alerts.
