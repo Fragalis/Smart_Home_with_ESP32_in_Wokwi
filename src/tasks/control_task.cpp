@@ -3,6 +3,13 @@
 static const char *TAG = "CONTROL";
 
 volatile bool light_state = false;
+volatile bool door_state = false;
+static int timeout_count = 0;
+
+bool is_person_at_door() {
+    if (data_storage.get_hc_sr04_data().distance < DISTANCE_THRESHOLD) return 1;
+    return 0;
+}
 
 bool is_sleep_time() {
     if (data_storage.get_ntp_data().hour < WAKE_TIME_THRESHOLD) return 1;
@@ -19,6 +26,10 @@ void check_state_task(void *args) {
     while (1) {
         // If it's not sleep time (11PM - 7AM) and it's dark, turn on light
         light_state = !is_sleep_time() && is_dark();
+
+        // If it's a person outside, open door
+        // Might use a padlock for authentication in the future
+        door_state = is_person_at_door();
         vTaskDelay(pdMS_TO_TICKS(CHECK_STATE_TIMER));
     }
 }
@@ -27,14 +38,28 @@ void control_light(int state) {
     gpio_set_level(LIGHT_PIN, state); // Set lamp state
 }
 
-enum DOOR_STATE {
-    OPEN, OPENING,
-    CLOSE, CLOSING
-};
+void control_door(int state) {
+    gpio_set_level(STEPPER_DIRECTION_PIN, state);
+    int step_count = 0;
+    while (step_count < STEPPER_MAX_STEP) {
+        step_count++;
+        gpio_set_level(STEPPER_STEP_PIN, 1);
+        vTaskDelay(pdMS_TO_TICKS(STEPPER_DELAY_TIMER));
+        gpio_set_level(STEPPER_STEP_PIN, 0);
+        vTaskDelay(pdMS_TO_TICKS(STEPPER_DELAY_TIMER));
+    }
+}
 
 void control_task(void *arg) {
+    bool last_door_state = false;
     while (1) {
         control_light(light_state);
+        if (timeout_count >= DOOR_TIMEOUT && door_state != last_door_state) {
+            control_door(door_state);
+            timeout_count = 0;
+            last_door_state = door_state;
+        }
+        timeout_count = (timeout_count >= DOOR_TIMEOUT)? DOOR_TIMEOUT : timeout_count + 1;
         vTaskDelay(pdMS_TO_TICKS(CONTROL_TIMER)); // Adjust delay as needed
     }
 }

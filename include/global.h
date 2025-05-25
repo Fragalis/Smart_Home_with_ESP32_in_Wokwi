@@ -70,7 +70,7 @@
 // Timer configuration
 #define DATA_SEMAPHORE_TIMER    100u
 #define BLINK_LED_TIMER         1000u
-#define DHT22_DELAY_TIMER       5000u
+#define DHT22_DELAY_TIMER       2500u
 #define LDR_TIMER               5000u
 #define WIFI_DELAY_TIMER        1000u
 #define THINGSBOARD_DELAY_TIMER 1000u
@@ -83,7 +83,7 @@
 #define LCD_FLUSH_TIMER         10u
 #define LCD_DISPLAY_TIMER       1000u
 #define LCD_FETCH_TIMER         5000u
-#define HC_SR04_DELAY_TIMER     5000u
+#define HC_SR04_DELAY_TIMER     2500u
 
 // LCD configuration
 #define LCD_SPI_HOST            SPI1_HOST 
@@ -94,5 +94,8 @@
 #define LUMI_THRESHOLD          100u     // Threshold to toggle the lamp
 #define SLEEP_TIME_THRESHOLD    23u
 #define WAKE_TIME_THRESHOLD     7u
+#define STEPPER_MAX_STEP        50u
+#define DISTANCE_THRESHOLD      50u
+#define DOOR_TIMEOUT            3u
 
 #endif // GLOBAL_H_

@@ -18,7 +18,7 @@
       "id": "led2",
       "top": 150,
       "left": 714.2,
-      "attrs": { "color": "white", "flip": "" }
+      "attrs": { "color": "white", "flip": "1" }
     },
     {
       "type": "wokwi-stepper-motor",
@@ -55,12 +55,12 @@
     [ "esp:21", "dht1:NC", "black", [ "h67.2" ] ],
     [ "esp:21", "ldr1:DO", "green", [ "h0" ] ],
     [ "esp:10", "ldr1:AO", "green", [ "h0" ] ],
-    [ "esp:20", "led2:A", "green", [ "h0" ] ],
+    [ "esp:20", "led2:A", "green", [ "v19.2", "h710.4" ] ],
     [ "drv1:GND.2", "drv1:GND.1", "black", [ "h19.35", "v38.48" ] ],
     [ "ldr1:VCC", "esp:3V3.1", "red", [ "v0" ] ],
     [ "dht1:VCC", "esp:3V3.1", "red", [ "v0" ] ],
     [ "esp:GND.3", "ldr1:GND", "black", [ "h0" ] ],
-    [ "esp:GND.4", "led2:C", "black", [ "h124.8", "v19.2" ] ],
+    [ "esp:GND.4", "led2:C", "black", [ "h422.4", "v0", "h278" ] ],
     [ "esp:3V3.2", "drv1:VMOT", "red", [ "h307.15", "v19.2" ] ],
     [ "drv1:VMOT", "drv1:VDD", "red", [ "h9.75", "v57.68" ] ],
     [ "drv1:MS1", "drv1:ENABLE", "black", [ "h-9.6", "v-9.6" ] ],

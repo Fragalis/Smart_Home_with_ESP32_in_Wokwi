@@ -24,6 +24,7 @@ void hc_sr04_task(void *args) {
         }
 
         uint16_t distance = timer / 12;
+        data_storage.set_hc_sr04_data(distance);
         ESP_LOGI(TAG, "distance %ucm", distance);
         vTaskDelay(pdMS_TO_TICKS(HC_SR04_DELAY_TIMER));
     }
@@ -31,7 +32,7 @@ void hc_sr04_task(void *args) {
 
 void hc_sr04_task_init() {
     // Create the HC-SR04 task
-    BaseType_t task_created = xTaskCreate(hc_sr04_task, "dht2hc_sr04_task2_task", 2048, NULL, 1, NULL);
+    BaseType_t task_created = xTaskCreate(hc_sr04_task, "dht2hc_sr04_task2_task", 4096, NULL, 1, NULL);
     if (task_created != pdPASS) {
         ESP_LOGE(TAG, "Failed to create hc_sr04_task");
         return;
