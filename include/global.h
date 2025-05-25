@@ -73,6 +73,7 @@
 #define NTP_WAIT_TIMER          1000u
 #define NTP_SYNC_TIMER          15000u
 #define STEPPER_DELAY_TIMER     10u
+#define CHECK_STATE_TIMER       1000u
 #define CONTROL_TIMER           1000u
 #define LCD_FLUSH_TIMER         10u
 #define LCD_DISPLAY_TIMER       1000u

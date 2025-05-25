@@ -30,7 +30,7 @@ void thingsboard_task(void *arg) {
 
 void thingsboard_task_init() {
     // Create the ThingsBoard task
-    BaseType_t task_created = xTaskCreate(thingsboard_task, "thingsboard_task", 2048, NULL, 5, NULL);
+    BaseType_t task_created = xTaskCreate(thingsboard_task, "thingsboard_task", 4096, NULL, 5, NULL);
     if (task_created != pdPASS) {
         ESP_LOGE(TAG, "Failed to create thingsboard_task");
         return;
