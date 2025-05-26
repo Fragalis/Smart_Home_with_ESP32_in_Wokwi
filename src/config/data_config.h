@@ -50,6 +50,8 @@ public:
     void set_hc_sr04_data(const hc_sr04_data_t &data);
     void set_hc_sr04_data(const int16_t &distance);
 
+    bool is_sensor_data_valid();
+
     dht22_data_t get_dht22_data();
     ldr_data_t get_ldr_data();
     ntp_data_t get_ntp_data();

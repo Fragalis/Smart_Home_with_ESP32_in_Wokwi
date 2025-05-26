@@ -17,20 +17,6 @@ bool is_person_at_door() {
     return distance < DISTANCE_THRESHOLD;
 }
 
-bool is_sleep_time() {
-    int8_t hour = data_storage.get_ntp_data().hour;
-    // Log the hour value for debugging
-    ESP_LOGI(TAG, "Current hour: %d", hour);
-    // Check if hour data is valid
-    if (hour == DATE_TIME_NAN) {
-        ESP_LOGE(TAG, "NTP data hour is invalid: %d", hour);
-        return light_state; // Default to last light_state if NTP data is not available
-    }
-    if (hour < WAKE_TIME_THRESHOLD) return 1;
-    if (hour > SLEEP_TIME_THRESHOLD) return 1;
-    return 0;
-}
-
 bool is_dark() {
     int16_t luminosity = data_storage.get_ldr_data().luminosity;
     // Log the luminosity value for debugging
@@ -45,8 +31,8 @@ bool is_dark() {
 
 void check_state_task(void *args) {
     while (1) {
-        // If it's not sleep time (11PM - 7AM) and it's dark, turn on light
-        light_state = !is_sleep_time() && is_dark();
+        // If it's dark, turn on light
+        light_state = is_dark();
 
         // If it's a person outside, open door
         // Might use a padlock for authentication in the future
@@ -76,7 +62,7 @@ void control_door(int state) {
 }
 
 typedef enum {
-    DOOR_IDLE, DOOR_FUNCTIONING
+    DOOR_IDLE, DOOR_FUNCTION
 } door_state_e;
 
 void control_task(void *arg) {

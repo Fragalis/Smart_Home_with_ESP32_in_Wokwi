@@ -97,6 +97,7 @@
 #define STEPPER_MAX_STEP        50u
 #define DISTANCE_THRESHOLD      50u
 #define DOOR_TIMEOUT            3u
+#define SENSOR_INIT_TIMEOUT_MS  5000u
 
 // ThingsBoard configuration
 #define THINGSBOARD_SERVER      "app.coreiot.io"
