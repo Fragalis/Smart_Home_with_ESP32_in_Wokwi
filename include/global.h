@@ -91,11 +91,23 @@
 #define LCD_BUFFER_SIZE         100u
 
 // Threshold configuration
-#define LUMI_THRESHOLD          100u     // Threshold to toggle the lamp
+#define LUMINOSITY_THRESHOLD    100u
 #define SLEEP_TIME_THRESHOLD    23u
 #define WAKE_TIME_THRESHOLD     7u
 #define STEPPER_MAX_STEP        50u
 #define DISTANCE_THRESHOLD      50u
 #define DOOR_TIMEOUT            3u
+
+// ThingsBoard configuration
+#define THINGSBOARD_SERVER      "app.coreiot.io"
+#define TOKEN                   "wlp3f4coe12qet5k2zgs"
+#define THINGSBOARD_PORT        1883u
+
+// Data configuration
+#define TEMPERATURE_NAN         -9999.0f   // Temperature cannot be below -273.15C
+#define HUMIDITY_NAN            -9999.0f   // Humidity cannot be below 0%
+#define LUMINOSITY_NAN          -1         // Luminosity cannot be negative
+#define DATE_TIME_NAN           -1         // Timer cannot be negative
+#define DISTANCE_NAN            -1         // Distance cannot be negative
 
 #endif // GLOBAL_H_

@@ -1,22 +1,31 @@
 #include "data_config.h"
 
+static dht22_data_t invalid_dht22_data = {
+    .temperature = TEMPERATURE_NAN,
+    .humidity = HUMIDITY_NAN,
+};
+
+static ldr_data_t invalid_ldr_data = {
+    .luminosity = LUMINOSITY_NAN,
+};
+
+static ntp_data_t invalid_ntp_data = {
+    .minute = DATE_TIME_NAN,
+    .hour = DATE_TIME_NAN,
+    .day = DATE_TIME_NAN,
+    .month = DATE_TIME_NAN,
+    .year = DATE_TIME_NAN,
+};
+
+static hc_sr04_data_t invalid_hc_sr04_data = {
+    .distance = DISTANCE_NAN,
+};
+
 DataStorage::DataStorage() {
-    dht22_data = {
-        .temperature = 0,
-        .humidity = 0,
-    };
-
-    ldr_data = {
-        .luminosity = 0,
-    };
-
-    ntp_data = {
-        .minute = 0,
-        .hour = 0,
-        .day = 0,
-        .month = 0,
-        .year = 0,
-    };
+    dht22_data = invalid_dht22_data;
+    ldr_data = invalid_ldr_data;
+    ntp_data = invalid_ntp_data;
+    hc_sr04_data = invalid_hc_sr04_data;
 
     data_semaphore = xSemaphoreCreateMutex();
     if (data_semaphore == NULL) {
@@ -49,7 +58,7 @@ void DataStorage::set_ldr_data(const ldr_data_t &data) {
     set_ldr_data(data.luminosity);
 }
 
-void DataStorage::set_ldr_data(const uint32_t &luminosity) {
+void DataStorage::set_ldr_data(const int32_t &luminosity) {
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
         ldr_data.luminosity = luminosity;
         xSemaphoreGive(data_semaphore);
@@ -63,7 +72,7 @@ void DataStorage::set_ntp_data(const ntp_data_t &data) {
     set_ntp_data(data.minute, data.hour, data.day, data.month, data.year);
 }
 
-void DataStorage::set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint16_t &year) {
+void DataStorage::set_ntp_data(const int8_t &minute, const int8_t &hour, const int8_t &day, const int8_t &month, const int16_t &year) {
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
         ntp_data.minute = minute;
         ntp_data.hour = hour;
@@ -81,7 +90,7 @@ void DataStorage::set_hc_sr04_data(const hc_sr04_data_t &data) {
     set_hc_sr04_data(data.distance);
 }
 
-void DataStorage::set_hc_sr04_data(const uint16_t &distance) {
+void DataStorage::set_hc_sr04_data(const int16_t &distance) {
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
         hc_sr04_data.distance = distance;
         xSemaphoreGive(data_semaphore);
@@ -92,7 +101,7 @@ void DataStorage::set_hc_sr04_data(const uint16_t &distance) {
 }
 
 dht22_data_t DataStorage::get_dht22_data() {
-    dht22_data_t data = {0, 0};
+    dht22_data_t data = invalid_dht22_data;
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
         data = dht22_data;
         xSemaphoreGive(data_semaphore);
@@ -104,7 +113,7 @@ dht22_data_t DataStorage::get_dht22_data() {
 }
 
 ldr_data_t DataStorage::get_ldr_data() {
-    ldr_data_t data = {0};
+    ldr_data_t data = invalid_ldr_data;
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
         data = ldr_data;
         xSemaphoreGive(data_semaphore);
@@ -116,7 +125,7 @@ ldr_data_t DataStorage::get_ldr_data() {
 }
 
 ntp_data_t DataStorage::get_ntp_data() {
-    ntp_data_t data = {0, 0, 0, 0, 0};
+    ntp_data_t data = invalid_ntp_data;
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
         data = ntp_data;
         xSemaphoreGive(data_semaphore);
@@ -128,7 +137,7 @@ ntp_data_t DataStorage::get_ntp_data() {
 }
 
 hc_sr04_data_t DataStorage::get_hc_sr04_data() {
-    hc_sr04_data_t data = {0};
+    hc_sr04_data_t data = invalid_hc_sr04_data;
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
         data = hc_sr04_data;
         xSemaphoreGive(data_semaphore);

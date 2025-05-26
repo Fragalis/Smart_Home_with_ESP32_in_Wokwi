@@ -23,7 +23,7 @@ void hc_sr04_task(void *args) {
             continue;
         }
 
-        uint16_t distance = timer / 12;
+        int16_t distance = timer / 12;
         data_storage.set_hc_sr04_data(distance);
         ESP_LOGI(TAG, "distance %ucm", distance);
         vTaskDelay(pdMS_TO_TICKS(HC_SR04_DELAY_TIMER));

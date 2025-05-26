@@ -9,19 +9,19 @@ typedef struct {
 } dht22_data_t;
 
 typedef struct {
-    uint32_t luminosity;
+    int32_t luminosity;
 } ldr_data_t;
 
 typedef struct {
-    uint8_t minute;
-    uint8_t hour;
-    uint8_t day;
-    uint8_t month;
-    uint16_t year;
+    int8_t minute;
+    int8_t hour;
+    int8_t day;
+    int8_t month;
+    int16_t year;
 } ntp_data_t;
 
 typedef struct {
-    uint16_t distance;
+    int16_t distance;
 } hc_sr04_data_t;
 
 class DataStorage {
@@ -42,13 +42,13 @@ public:
     void set_dht22_data(const float &temperature, const float &humidity);
 
     void set_ldr_data(const ldr_data_t &data);
-    void set_ldr_data(const uint32_t &luminosity);
+    void set_ldr_data(const int32_t &luminosity);
 
     void set_ntp_data(const ntp_data_t &data);
-    void set_ntp_data(const uint8_t &minute, const uint8_t &hour, const uint8_t &day, const uint8_t &month, const uint16_t &year);
+    void set_ntp_data(const int8_t &minute, const int8_t &hour, const int8_t &day, const int8_t &month, const int16_t &year);
     
     void set_hc_sr04_data(const hc_sr04_data_t &data);
-    void set_hc_sr04_data(const uint16_t &distance);
+    void set_hc_sr04_data(const int16_t &distance);
 
     dht22_data_t get_dht22_data();
     ldr_data_t get_ldr_data();

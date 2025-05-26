@@ -1,7 +1,8 @@
 #include <global.h>
-#include "driver/ledc.h"
 
 extern "C" {
+    
+
     void app_main(void) {
         // Setup configurations
         hardware_config_init();
@@ -9,14 +10,16 @@ extern "C" {
         // Setup device tasks
         dht22_task_init();
         ldr_task_init();
-        control_task_init();
-        lcd_task_init();
         hc_sr04_task_init();
-
+        
         // Setup connection tasks
         wifi_task_init();
         thingsboard_task_init();
         ntp_task_init();
+
+        // Setup control tasks
+        control_task_init();
+        lcd_task_init();
     }
 }
 /*

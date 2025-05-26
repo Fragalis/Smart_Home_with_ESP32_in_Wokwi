@@ -1,9 +1,5 @@
 #include "thingsboard_task.h"
 
-#define BROKER_URL "app.coreiot.io"
-#define TOKEN "wlp3f4coe12qet5k2zgs"
-#define PORT 1883u
-
 Espressif_MQTT_Client mqttClient;
 ThingsBoard tb(mqttClient);
 static const char *TAG = "TB";
@@ -17,7 +13,7 @@ void thingsboard_task(void *arg) {
         ESP_LOGE(TAG, "WiFi not connected");
         vTaskDelay(pdMS_TO_TICKS(WIFI_DELAY_TIMER));
     }
-    tb.connect(BROKER_URL, TOKEN, PORT);
+    tb.connect(THINGSBOARD_SERVER, TOKEN, THINGSBOARD_PORT);
     while (!tb.connected()) {
         vTaskDelay(pdMS_TO_TICKS(THINGSBOARD_DELAY_TIMER));
     }
