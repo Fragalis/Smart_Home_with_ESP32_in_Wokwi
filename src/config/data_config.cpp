@@ -100,6 +100,20 @@ void DataStorage::set_hc_sr04_data(const int16_t &distance) {
     }
 }
 
+bool DataStorage::is_sensor_data_valid() {
+    bool valid = true;
+    if (data_storage.get_dht22_data().temperature == TEMPERATURE_NAN || data_storage.get_dht22_data().humidity == HUMIDITY_NAN) {
+        valid = false;
+    }
+    if (data_storage.get_ldr_data().luminosity == LUMINOSITY_NAN) {
+        valid = false;
+    }
+    if (data_storage.get_hc_sr04_data().distance == DISTANCE_NAN) {
+        valid = false;
+    }
+    return valid;
+}
+
 dht22_data_t DataStorage::get_dht22_data() {
     dht22_data_t data = invalid_dht22_data;
     if (xSemaphoreTake(data_semaphore, pdMS_TO_TICKS(DATA_SEMAPHORE_TIMER)) == pdTRUE) {
